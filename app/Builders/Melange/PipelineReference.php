@@ -3,12 +3,15 @@
 namespace App\Builders\Melange;
 
 use App\BuilderInterface;
+use App\Document;
 use App\Mark;
+use Minicli\FileNotFoundException;
 use Minicli\Stencil;
 
 class PipelineReference implements BuilderInterface
 {
-    public $templateDir;
+    public string $templateDir;
+    public Document $document;
 
     public function configure(array $options = []): void
     {
@@ -16,25 +19,23 @@ class PipelineReference implements BuilderInterface
     }
 
     /**
-     * @param string $title
-     * @param string $description
-     * @param array $nodes
-     * @param array $meta
+     * @param Document $document
      * @return string
-     * @throws \Minicli\FileNotFoundException
+     * @throws FileNotFoundException
      */
-    public function getMarkdown(string $title, string $description, array $nodes, array $meta = []): string
+    public function getMarkdown(Document $document): string
     {
+        $this->document = $document;
         $stencil = new Stencil($this->templateDir);
 
         return $stencil->applyTemplate('pipeline_reference_page', [
-            'title' => $title,
-            'description' => $description,
-            'content' => $this->getContentMarkdown($title, $description, $nodes, $meta)
+            'title' => $this->document->getTitle(),
+            'description' => 'Reference docs for the ' . $this->document->getTitle() . ' melange pipeline',
+            'content' => $this->getContentMarkdown($this->document->getTitle(), $this->document->yaml)
         ]);
     }
 
-    public function getContentMarkdown(string $title, string $description, array $nodes, array $meta = []): string
+    public function getContentMarkdown(string $title, array $nodes): string
     {
         $needs = $nodes['needs'] ?? null;
         $inputs = $nodes['inputs'] ?? null;
@@ -55,9 +56,9 @@ class PipelineReference implements BuilderInterface
                 if (isset($item['default'])) {
                     $default = $item['default'];
                     if (is_bool($default)) {
-                        $default = $default ? "true" : "falss";
+                        $default = $default ? "true" : "false";
                     }
-                    $inputDescription .= " Default is set to `$default` .";
+                    $inputDescription .= " Default is set to `$default`";
                 }
 
                 $table[] = [$inputName, $inputDescription];
@@ -67,18 +68,37 @@ class PipelineReference implements BuilderInterface
             $referenceTable = Mark::table($table, ['Input', 'Description']);
         }
 
-        if (count($needs['packages'])) {
+        if (isset($needs['packages']) && count($needs['packages'])) {
             foreach ($needs['packages'] as $dependency) {
                 $dependencies .= "- $dependency\n";
             }
         }
 
-        $content .= "\n" . $this->buildSectionContent($title, $nodes['name'], $referenceTable, $dependencies);
+        $content .= "\n" . $this->buildSectionContent($title, $this->document->getMeta('name') ?? $nodes['name'], $referenceTable, $dependencies);
         return $content;
     }
 
     public function buildSectionContent(string $title, string $description, string $referenceTable, string $dependencies): string
     {
-        return sprintf("## %s\n%s\n\n### Dependencies\n%s\n\n### Reference\n%s", $title, $description, $dependencies, $referenceTable);
+        if ($dependencies === "") {
+            $dependencies = "None";
+        }
+
+        if ($referenceTable === "") {
+            $referenceTable = "This pipeline doesn't expect any input arguments.";
+        }
+
+        $example = "There are no examples available.";
+
+        if ($this->document->getMeta('example')) {
+            $example = "```yaml\n" . $this->document->getMeta('example') . "\n```\n";
+        }
+
+        return sprintf("%s\n\n### Dependencies\n%s\n\n### Reference\n%s\n\n### Example\n%s",
+            $description,
+            $dependencies,
+            $referenceTable,
+            $example
+        );
     }
 }

@@ -1,0 +1,4 @@
+builders:
+  default: Builders\DefaultBuilder
+  melange-pipeline: App\Builders\Melange\PipelineReference
+  templatesDir: templates
