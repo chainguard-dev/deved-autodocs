@@ -9,7 +9,6 @@ Autodocs is developed and maintained by the Developer Education team at Chaingua
 
 ## Requirements
 To execute the scripts in this repository, you will need a PHP runtime environment with Composer.
-Docker is also fine.
 
 ### Installation
 
@@ -32,11 +31,20 @@ Then check that you're able to run yamldocs with:
 ./vendor/bin/yamldocs help
 ```
 
-Finally, create a couple directories in your **workdir** to use as input and output paths:
+You should see output like this:
 
 ```shell
-mkdir workdir/yaml
-mkdir workdir/markdown
+Available Commands
+
+help
+
+stencil
+
+build
+└──docs
+└──index
+└──markdown
+
 ```
 
 ## Manually Building Docs
@@ -55,15 +63,6 @@ The script expects to find a directory structure like this:
 ```shell
 workdir
 ├── markdown
-│   └── melange-pipelines
-│       ├── autoconf
-│       ├── cmake
-│       ├── meson
-│       ├── split
-│       ├── fetch.md
-│       ├── git-checkout.md
-│       ├── patch.md
-│       └── strip.md
 └── yaml
     └── pipelines
         ├── autoconf
@@ -79,6 +78,8 @@ workdir
 ```
 
 The `build-pipelines-docs.sh` [script](scripts/build-pipelines-docs.sh) will go through the directories in **workdir/yaml/pipelines** and generate docs for every YAML found, saving the markdown files in **workdir/markdown/melange-pipelines**.
+Subdirectories will be automatically created.
+
 ```shell
 ./scripts/build-pipelines-docs.sh
 ```
