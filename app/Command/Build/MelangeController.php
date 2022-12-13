@@ -8,8 +8,8 @@ class MelangeController extends CommandController
 {
     public function handle(): void
     {
-        $source = __DIR__ . '/../../../workdir/yaml/pipelines';
-        $output = __DIR__ . '/../../../workdir/markdown/melange-pipelines';
+        $source = getenv('YAMLDOCS_SOURCE') ?: __DIR__ . '/../../../workdir/yaml/pipelines';
+        $output = getenv('YAMLDOCS_OUTPUT') ?: __DIR__ . '/../../../workdir/markdown/melange-pipelines';
         $yamldocs = __DIR__ . '/../../../vendor/erikaheidi/yamldocs/bin/yamldocs';
 
         foreach (glob($source . '/*') as $path) {

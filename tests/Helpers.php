@@ -3,9 +3,12 @@
 use Minicli\App;
 use Minicli\Command\CommandCall;
 
-function getCommandsPath(): string
+function getCommandsPath(): array
 {
-    return __DIR__ . '/../app/Command';
+    return [
+        __DIR__ . '/../app/Command',
+        '@minicli/command-help'
+    ];
 }
 
 function getApp(): App
