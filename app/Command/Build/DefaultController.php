@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Command\Demo;
+namespace App\Command\Build;
 
-use Minicli\App;
 use Minicli\Command\CommandController;
 
 class DefaultController extends CommandController
 {
     public function handle(): void
     {
-        $this->getPrinter()->info('Run ./minicli help for usage help.');
+        $this->getPrinter()->info("Example:", true);
+        $this->getPrinter()->info("./autodocs build melange");
     }
+
 }

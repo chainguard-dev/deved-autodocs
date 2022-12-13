@@ -18,6 +18,8 @@ $app = new App([
     'debug' => true
 ]);
 
+$app->setSignature('./autodocs help');
+
 try {
     $app->runCommand($argv);
 } catch (CommandNotFoundException $notFoundException) {

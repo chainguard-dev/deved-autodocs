@@ -1,6 +1,6 @@
 {
-  "name": "minicli/application",
-  "description": "Minicli Application Template",
+  "name": "chainguard-dev/deved-autodocs",
+  "description": "Automated Docs - Chainguard DevEdu team",
   "license": "MIT",
   "homepage": "https://github.com/minicli/application",
   "keywords": ["cli","command-line", "template"],
