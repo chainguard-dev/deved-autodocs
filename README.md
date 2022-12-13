@@ -8,7 +8,7 @@ Autodocs uses [yamldocs](https://github.com/erikaheidi/yamldocs), a PHP cli tool
 Autodocs is developed and maintained by the Developer Education team at Chainguard.
 
 ## Requirements
-To execute the scripts in this repository, you will need a PHP runtime environment with Composer.
+To execute the scripts in this repository, you will need a PHP 8.1+ runtime environment with Composer.
 
 ### Installation
 
@@ -23,28 +23,6 @@ Install Composer dependencies:
 
 ```shell
 composer install
-```
-
-Then check that you're able to run yamldocs with:
-
-```shell
-./vendor/bin/yamldocs help
-```
-
-You should see output like this:
-
-```shell
-Available Commands
-
-help
-
-stencil
-
-build
-└──docs
-└──index
-└──markdown
-
 ```
 
 ## Manually Building Docs
@@ -77,16 +55,16 @@ workdir
 
 ```
 
-The `build-pipelines-docs.sh` [script](scripts/build-pipelines-docs.sh) will go through the directories in **workdir/yaml/pipelines** and generate docs for every YAML found, saving the markdown files in **workdir/markdown/melange-pipelines**.
+The `./autodocs build melange` will go through the directories in **workdir/yaml/pipelines** and generate docs for every YAML found, saving the markdown files in **workdir/markdown/melange-pipelines**.
 Subdirectories will be automatically created.
 
 ```shell
-./scripts/build-pipelines-docs.sh
+./autodocs build melange
 ```
 
 #### Generating Partial Docs
 
-Example of how to manually generate one set of docs / update only a subfolder.
+Example of how to manually generate one set of docs / update only a subfolder using `yamldocs` directly:
 ```shell
 ./vendor/bin/yamldocs build docs source=workdir/yaml/pipelines/autoconf output=workdir/markdown/autoconf
 ```
