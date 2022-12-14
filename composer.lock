@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "erikaheidi/yamldocs",
-            "version": "0.3.3",
+            "version": "0.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erikaheidi/yamldocs.git",
-                "reference": "afec368c4a979e56715a80831d65d523965ad891"
+                "reference": "e592e66eb57328ffbb3a71355e63483dac9a8011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erikaheidi/yamldocs/zipball/afec368c4a979e56715a80831d65d523965ad891",
-                "reference": "afec368c4a979e56715a80831d65d523965ad891",
+                "url": "https://api.github.com/repos/erikaheidi/yamldocs/zipball/e592e66eb57328ffbb3a71355e63483dac9a8011",
+                "reference": "e592e66eb57328ffbb3a71355e63483dac9a8011",
                 "shasum": ""
             },
             "require": {
@@ -52,9 +52,9 @@
             ],
             "support": {
                 "issues": "https://github.com/erikaheidi/yamldocs/issues",
-                "source": "https://github.com/erikaheidi/yamldocs/tree/0.3.3"
+                "source": "https://github.com/erikaheidi/yamldocs/tree/0.3.4"
             },
-            "time": "2022-12-05T09:21:48+00:00"
+            "time": "2022-12-14T17:23:41+00:00"
         },
         {
             "name": "minicli/command-help",
@@ -1032,16 +1032,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.20",
+            "version": "9.2.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "af7463c955007de36db0c5e26d03e2f933c2e980"
+                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/af7463c955007de36db0c5e26d03e2f933c2e980",
-                "reference": "af7463c955007de36db0c5e26d03e2f933c2e980",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
+                "reference": "3f893e19712bb0c8bc86665d1562e9fd509c4ef0",
                 "shasum": ""
             },
             "require": {
@@ -1097,7 +1097,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.20"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.21"
             },
             "funding": [
                 {
@@ -1105,7 +1105,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-12-13T07:49:28+00:00"
+            "time": "2022-12-14T13:26:54+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",

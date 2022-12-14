@@ -12,16 +12,6 @@ class MelangeController extends CommandController
         $output = getenv('YAMLDOCS_OUTPUT') ?: __DIR__ . '/../../../workdir/markdown/melange-pipelines';
         $yamldocs = __DIR__ . '/../../../vendor/erikaheidi/yamldocs/bin/yamldocs';
 
-        foreach (glob($source . '/*') as $path) {
-            if (is_dir($path) AND basename($path) !== "_meta") {
-                $outputDir = $output . '/' . basename($path);
-                if (!is_dir($outputDir)) {
-                    mkdir($outputDir);
-                }
-
-                echo shell_exec("$yamldocs build docs source=$path output=$outputDir builder=melange-pipeline");
-            }
-        }
-        echo shell_exec("$yamldocs build docs source=$source output=$output");
+        echo shell_exec("$yamldocs build docs source=$source output=$output builder=melange-pipeline --recursive");
     }
 }
