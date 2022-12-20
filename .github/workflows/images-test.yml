@@ -15,7 +15,7 @@ jobs:
           repository: chainguard-images/images
           path: images
       - name: "Update the reference docs for Chainguard Images"
-        uses: chainguard-dev/deved-autodocs@v1.0.1
+        uses: chainguard-dev/deved-autodocs@1.0.1
         with:
           command: build images
         env:
@@ -24,6 +24,6 @@ jobs:
       - name: Create a PR
         uses: peter-evans/create-pull-request@v3
         with:
+          path: "${{ github.workspace }}/autodocs"
           commit-message: Update Images Reference
           title: "[automated] Update Images Reference Docs"
-          token: ${{ secrets.GITHUB_TOKEN }}
