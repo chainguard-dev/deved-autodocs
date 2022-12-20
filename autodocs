@@ -20,8 +20,13 @@ $app = new App([
 
 $app->setSignature('./autodocs help');
 
+$input = $argv;
+//check for workflow inputs
+if (getenv('INPUT_COMMAND')) {
+    $input = array_merge(['autodocs'], explode(' ', getenv('INPUT_COMMAND')));
+}
 try {
-    $app->runCommand($argv);
+    $app->runCommand($input);
 } catch (CommandNotFoundException $notFoundException) {
     $app->getPrinter()->error("Command Not Found.");
     return 1;
