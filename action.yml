@@ -6,10 +6,10 @@ branding:
   icon: 'document'
   color: 'purple'
 inputs:
-  template:
-    description: 'Cover template to Use'
+  command:
+    description: 'Command to call: ./autodocs [command]'
     required: false
-    default: 'cover_basic.json'
+    default: build images
 outputs:
   response:
     description: 'Output'

@@ -18,6 +18,8 @@ jobs:
           path: images
       - name: "Update the reference docs for Chainguard Images"
         uses: chainguard-dev/deved-autodocs@v1.0
+        with:
+          command: build images
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/edu/content/chainguard/chainguard-images/images"
