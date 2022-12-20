@@ -9,18 +9,27 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: autodocs
+
       - name: "Check out Images Monorepo"
         uses: actions/checkout@v2
         with:
           repository: chainguard-images/images
           path: images
+
+      - name: "Set up workdir"
+        run: mkdir -p "${{ github.workspace }}/workdir" && chmod 777 "${{ github.workspace }}/workdir"
+
       - name: "Update the reference docs for Chainguard Images"
         uses: chainguard-dev/deved-autodocs@1.0.2
         with:
           command: build images
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
-          YAMLDOCS_OUTPUT: "${{ github.workspace }}/autodocs/workdir/markdown"
+          YAMLDOCS_OUTPUT: "${{ github.workspace }}/workdir"
+
+      - name: "Copy updates to main repo"
+        run: cp -R "${{ github.workspace }}/workdir/*" "${{ github.workspace }}/autodocs/workdir/markdown/"
+
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
         with:
