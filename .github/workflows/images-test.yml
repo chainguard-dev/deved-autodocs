@@ -32,7 +32,11 @@ jobs:
           ls "${{ github.workspace }}/workdir" && \
           echo "Copying files..." && \
           cp -R "${{ github.workspace }}/workdir" "${{ github.workspace }}/autodocs/workdir/markdown" && \
-          echo "Finished copy, check dest files:" && ls "${{ github.workspace }}/autodocs/workdir/markdown"
+          echo "Finished copy" 
+
+      - name: "Debug content dir"
+        run: |
+          ls "${{ github.workspace }}/autodocs/workdir/markdown/workdir"
 
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
