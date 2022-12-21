@@ -31,18 +31,22 @@ jobs:
 
       - name: "Copy updates to main repo"
         run: |
-          ls "${{ github.workspace }}/${{ env.WORKDIR }}" && \
           echo "Copying files..." && \
           cp -R "${{ github.workspace }}/${{ env.WORKDIR }}" "${{ github.workspace }}/autodocs/workdir" && \
           echo "Finished copy" 
-
-      - name: "Debug content dir"
-        run: |
-          ls "${{ github.workspace }}/autodocs/workdir/${{ env.WORKDIR }}"
 
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
         with:
           path: "${{ github.workspace }}/autodocs"
           commit-message: Update Images Reference
-          title: "[automated] Update Images Reference Docs"
+          title: "[AutoDocs] Update Images Reference Docs"
+          signoff: true
+          labels: |
+            documentation
+            images
+            automated
+          team-reviewers: |
+            owners
+            maintainers
+
