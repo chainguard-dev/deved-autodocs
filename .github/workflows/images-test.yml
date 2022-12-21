@@ -46,7 +46,7 @@ jobs:
             documentation
             images
             automated
-          team-reviewers: |
-            owners
-            maintainers
+          assignees: erikaheidi
+          reviewers: erikaheidi
+
 
