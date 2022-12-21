@@ -1,6 +1,8 @@
 name: Test Workflow for Images Reference Docs
 on:
   workflow_dispatch:
+env:
+  WORKDIR: images-reference
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -17,7 +19,7 @@ jobs:
           path: images
 
       - name: "Set up workdir"
-        run: mkdir -p "${{ github.workspace }}/workdir" && chmod 777 "${{ github.workspace }}/workdir"
+        run: mkdir -p "${{ github.workspace }}/$WORKDIR" && chmod 777 "${{ github.workspace }}/$WORKDIR"
 
       - name: "Update the reference docs for Chainguard Images"
         uses: chainguard-dev/deved-autodocs@1.0.2
@@ -25,18 +27,18 @@ jobs:
           command: build images
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
-          YAMLDOCS_OUTPUT: "${{ github.workspace }}/workdir"
+          YAMLDOCS_OUTPUT: "${{ github.workspace }}/$WORKDIR"
 
       - name: "Copy updates to main repo"
         run: |
-          ls "${{ github.workspace }}/workdir" && \
+          ls "${{ github.workspace }}/$WORKDIR" && \
           echo "Copying files..." && \
-          cp -R "${{ github.workspace }}/workdir" "${{ github.workspace }}/autodocs/workdir/markdown" && \
+          cp -R "${{ github.workspace }}/$WORKDIR" "${{ github.workspace }}/autodocs/workdir" && \
           echo "Finished copy" 
 
       - name: "Debug content dir"
         run: |
-          ls "${{ github.workspace }}/autodocs/workdir/markdown/workdir"
+          ls "${{ github.workspace }}/autodocs/workdir/$WORKDIR"
 
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
