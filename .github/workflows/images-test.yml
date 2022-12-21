@@ -28,7 +28,11 @@ jobs:
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/workdir"
 
       - name: "Copy updates to main repo"
-        run: cp -R "${{ github.workspace }}/workdir" "${{ github.workspace }}/autodocs/workdir/markdown"
+        run: |
+          ls "${{ github.workspace }}/workdir" && \
+          echo "Copying files..." && \
+          cp -R "${{ github.workspace }}/workdir" "${{ github.workspace }}/autodocs/workdir/markdown" && \
+          echo "Finished copy, check dest files:" && ls "${{ github.workspace }}/autodocs/workdir/markdown"
 
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
