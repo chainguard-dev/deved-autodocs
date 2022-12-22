@@ -47,6 +47,6 @@ jobs:
             images
             automated
           assignees: erikaheidi
-          reviewers: erikaheidi
+          team-reviewers: deved-team
 
 
