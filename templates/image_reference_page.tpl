@@ -1,6 +1,5 @@
 ---
 title: "{{ title }}"
-hide_title: yes
 type: "article"
 description: "{{ description }}"
 date: 2022-11-01T11:07:52+02:00
