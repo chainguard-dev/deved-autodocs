@@ -12,7 +12,8 @@
   "require": {
     "minicli/minicli": "^3.0",
     "minicli/command-help": "^0.1.0",
-    "erikaheidi/yamldocs": "^0.3.0"
+    "erikaheidi/yamldocs": "^0.3.0",
+    "minicli/curly": "^0.2.2"
   },
   "require-dev": {
     "pestphp/pest": "^1.21"
