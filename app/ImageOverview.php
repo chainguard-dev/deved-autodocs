@@ -24,7 +24,7 @@ class ImageOverview
             return "";
         }
 
-        $reference = '`' . $imageMeta['status'] . '` ' .  '[' . $imageMeta['ref'] . '](' . $imageMeta['ref'] . ')';
+        $reference = '`' . $imageMeta['status'] . '` ' .  '[' . $imageMeta['ref'] . '](https://github.com/chainguard-images/images/tree/main/images/' . basename($this->imagePath) . ')';
 
         $rows = [];
         foreach ($imageMeta['tags'] as $tag) {
