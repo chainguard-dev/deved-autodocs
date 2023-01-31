@@ -11,6 +11,10 @@ class ImageOverview
         $this->imagePath = $image;
     }
 
+    function code($str) {
+        return sprintf("`%s`", $str);
+    }
+
     /**
      * @return string
      * @throws \Exception
@@ -30,7 +34,7 @@ class ImageOverview
         foreach ($imageMeta['tags'] as $tag) {
             $rows[] = [
                 '`' . $tag['primary'] . '`',
-                implode(', ', $tag['dynamic']['resolved'])
+                implode(', ', array_map('code', $tag['dynamic']['resolved']))
             ];
         }
 
