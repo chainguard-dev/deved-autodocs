@@ -3,11 +3,10 @@ on:
   pull_request:
     types:
       - opened
-    branches:
-      - create-pull-request/patch
   workflow_dispatch:
 jobs:
   main:
+    if:  startsWith(github.head_ref, 'create-pull-request/')
     runs-on: ubuntu-latest
     steps:
       - name: "Send notification to Slack"
