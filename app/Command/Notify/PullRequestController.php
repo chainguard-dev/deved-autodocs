@@ -14,5 +14,4 @@ class PullRequestController extends CommandController
 
         $this->getApp()->runCommand(['autodocs', 'notify', 'slack', 'message=' . $message]);
     }
-
 }

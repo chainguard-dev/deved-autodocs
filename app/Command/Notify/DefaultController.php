@@ -11,5 +11,4 @@ class DefaultController extends CommandController
         $this->getPrinter()->info("Example:", true);
         $this->getPrinter()->info("./autodocs notify slack message=\"your message\"");
     }
-
 }

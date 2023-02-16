@@ -94,7 +94,8 @@ class PipelineReference implements BuilderInterface
             $example = "```yaml\n" . $this->document->getMeta('example') . "\n```\n";
         }
 
-        return sprintf("%s\n\n### Dependencies\n%s\n\n### Reference\n%s\n\n### Example\n%s",
+        return sprintf(
+            "%s\n\n### Dependencies\n%s\n\n### Reference\n%s\n\n### Example\n%s",
             $description,
             $dependencies,
             $referenceTable,

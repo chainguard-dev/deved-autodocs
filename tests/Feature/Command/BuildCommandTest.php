@@ -14,4 +14,3 @@ test('the "build" command outputs example message', function () {
     $app = getApp();
     $app->runCommand(['autodocs', 'build']);
 })->expectOutputRegex("/Example/");
-

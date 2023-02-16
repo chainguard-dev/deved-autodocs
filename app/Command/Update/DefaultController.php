@@ -12,5 +12,4 @@ class DefaultController extends CommandController
         $this->getPrinter()->info("Example:");
         $this->getPrinter()->info("./autodocs copy images");
     }
-
 }

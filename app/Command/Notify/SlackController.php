@@ -8,10 +8,9 @@ use Minicli\Curly\Client;
 
 class SlackController extends CommandController
 {
-
     public function handle(): void
     {
-        if (getenv('AUTODOCS_SLACK_PRIMARY') == null ) {
+        if (getenv('AUTODOCS_SLACK_PRIMARY') == null) {
             throw new \Exception("Missing AUTODOCS_SLACK_PRIMARY environment variable with channel endpoint.");
         }
 
