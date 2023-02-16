@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5e02a968cafb75eb338f681554fd22f",
+    "content-hash": "c19fa2cee511cadb478840e897cb51f2",
     "packages": [
         {
             "name": "erikaheidi/yamldocs",
@@ -140,6 +140,51 @@
                 "source": "https://github.com/minicli/command-stencil/tree/0.1.0"
             },
             "time": "2022-06-20T17:49:28+00:00"
+        },
+        {
+            "name": "minicli/curly",
+            "version": "0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/minicli/curly.git",
+                "reference": "9287f74597298c2f5372a74212e1bcc86ec78675"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/minicli/curly/zipball/9287f74597298c2f5372a74212e1bcc86ec78675",
+                "reference": "9287f74597298c2f5372a74212e1bcc86ec78675",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.7",
+                "pestphp/pest": "^1.21"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Minicli\\Curly\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Simple Curl Client",
+            "homepage": "https://github.com/erikaheidi/minicli",
+            "keywords": [
+                "api",
+                "curl",
+                "wrapper"
+            ],
+            "support": {
+                "issues": "https://github.com/minicli/curly/issues",
+                "source": "https://github.com/minicli/curly/tree/0.2.2"
+            },
+            "time": "2022-10-07T07:40:59+00:00"
         },
         {
             "name": "minicli/minicli",
