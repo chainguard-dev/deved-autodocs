@@ -1,0 +1,19 @@
+name: Send Slack Notification about new Autodocs PR
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - create-pull-request/patch
+    paths:
+      - '**.md'
+  workflow_dispatch:
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Send notification to Slack"
+        uses: chainguard-dev/deved-autodocs@v1.1
+        with:
+          command: notify pullrequest
+          pr_number: ${{ github.event.pull_request.number }}
