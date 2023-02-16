@@ -68,17 +68,6 @@ class ImagesController extends CommandController
     }
 
     /**
-     * @throws \Minicli\FileNotFoundException
-     */
-    public function getIndexPage(string $title): string
-    {
-        return $this->stencil->applyTemplate('_index_page', [
-            'title' => $title,
-            'description' => 'Reference docs for the ' . $title . ' Chainguard Image'
-        ]);
-    }
-
-    /**
      * @param string $outputFile
      * @param string $content
      * @return void
