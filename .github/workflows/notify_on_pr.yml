@@ -1,8 +1,6 @@
 name: Send Slack Notification about new Autodocs PR
 on:
   pull_request:
-    types:
-      - opened
   workflow_dispatch:
 jobs:
   main:
