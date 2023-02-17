@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Send notification to Slack"
-        uses: chainguard-dev/deved-autodocs@1.0.7
+        uses: chainguard-dev/deved-autodocs@1.0.8
         with:
           command: notify pullrequest
         env:
@@ -18,3 +18,4 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_CHANGED: ${{ github.event.pull_request.changedFiles }}
           PR_STATE: ${{ github.event.pull_request.changedFiles }}
+          PR_URL: ${{ github.event.pull_request.url }}
