@@ -11,7 +11,8 @@ class ImageOverview
         $this->imagePath = $image;
     }
 
-    function code($str) {
+    public function code($str): string
+    {
         return sprintf("`%s`", $str);
     }
 
@@ -34,7 +35,7 @@ class ImageOverview
         foreach ($imageMeta['tags'] as $tag) {
             $rows[] = [
                 '`' . $tag['primary'] . '`',
-                implode(', ', array_map('code', $tag['dynamic']['resolved']))
+                implode(', ', array_map(array($this, 'code'), $tag['dynamic']['resolved']))
             ];
         }
 
