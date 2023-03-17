@@ -10,17 +10,54 @@ class ImageSpecs
     public string $imagePath;
     public array $imageConfig;
     public array $variants;
+    public array $globalOptions;
 
     public function __construct(string $image)
     {
         $this->imagePath = $image;
         $this->imageName = basename($this->imagePath);
         $this->imageConfig = $this->loadYaml($this->imagePath . '/image.yaml');
+        //check for global options
+        if (is_file($this->imagePath . '/../../globals.yaml')) {
+            $this->globalOptions = $this->loadYaml($this->imagePath . '/../../globals.yaml');
+        }
         $variants = [];
 
         foreach ($this->imageConfig['versions'] as $variant) {
             $config = $variant['apko']['config'];
-            $variants[basename($config, '.apko.yaml')] = $this->loadYaml($this->imagePath . "/$config");
+            $variantName = basename($config, '.apko.yaml');
+            $variants[$variantName] = $this->loadYaml($this->imagePath . "/$config");
+
+            if (isset($variant['apko']['subvariants'])) {
+                //image has subvariants
+                foreach ($variant['apko']['subvariants'] as $subvariant) {
+                    //unfurl subvariant options
+                    $subvariantName = $variantName . $subvariant['suffix'];
+                    $variants[$subvariantName] = $variants[$variantName];
+
+                    $extraOptions = isset($this->imageConfig['options'])
+                        ? array_merge($this->globalOptions['options'], $this->imageConfig['options'])
+                        : $this->globalOptions['options'];
+
+                    foreach ($subvariant['options'] as $option) {
+                        if (!isset($extraOptions[$option])) {
+                            continue;
+                        }
+
+                        if (isset($extraOptions[$option]['contents']['packages']['add'])) {
+                            $variants[$subvariantName]['contents']['packages'] = array_merge(
+                                $variants[$subvariantName]['contents']['packages'],
+                                $extraOptions[$option]['contents']['packages']['add']
+                            );
+                        }
+
+                        if (isset($extraOptions[$option]['entrypoint'])) {
+                            $variants[$subvariantName]['entrypoint'] = $extraOptions[$option]['entrypoint'];
+                        }
+                    }
+                }
+            }
+
         }
 
         $this->variants = $variants;
@@ -109,11 +146,10 @@ class ImageSpecs
 
     public function getDefaultUser(array $yamlConfig): string
     {
-        if (!isset($yamlConfig['accounts']['users'])) {
-            return '`root`';
-        }
-
-        if (!isset($yamlConfig['accounts']['run-as'])) {
+        if (!isset($yamlConfig['accounts']['users']) ||
+            !isset($yamlConfig['accounts']['run-as']) ||
+            $yamlConfig['accounts']['run-as'] == 0
+        ) {
             return '`root`';
         }
 
