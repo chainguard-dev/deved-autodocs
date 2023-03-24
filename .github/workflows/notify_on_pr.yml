@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Send notification to Slack"
-        uses: chainguard-dev/deved-autodocs@1.0.9
+        uses: chainguard-dev/deved-autodocs@1.3.2
         with:
           command: notify pullrequest
         env:
