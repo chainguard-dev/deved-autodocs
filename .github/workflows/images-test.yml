@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 env:
   WORKDIR: images-reference
-  CHANGELOG: "${{ github.workspace }}/changelog.txt"
+  CHANGELOG: "${{ github.workspace }}/${{ github.env.WORKDIR }}/changelog.txt"
 jobs:
   main:
     runs-on: ubuntu-latest
