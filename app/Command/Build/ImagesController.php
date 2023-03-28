@@ -9,6 +9,7 @@ use Minicli\Stencil;
 class ImagesController extends CommandController
 {
     protected Stencil $stencil;
+    public array $newImages = [];
 
     /**
      * @throws \Minicli\FileNotFoundException
@@ -17,8 +18,8 @@ class ImagesController extends CommandController
     {
         $source = getenv('YAMLDOCS_SOURCE') ?: __DIR__ . '/../../../workdir/yaml/images';
         $output = getenv('YAMLDOCS_OUTPUT') ?: __DIR__ . '/../../../workdir/markdown/images/reference';
+        $tplDir = getenv('YAMLDOCS_TEMPLATES') ?: __DIR__ . '/../../../workdir/templates';
 
-        $tplDir = __DIR__ . '/../../../templates';
         $this->stencil = new Stencil($tplDir);
 
         if (!is_dir($output)) {
@@ -40,6 +41,22 @@ class ImagesController extends CommandController
         foreach (glob($source . '/*') as $image) {
             $this->buildImageDocs($image, $output);
         }
+
+        if ($this->hasParam('changelog')) {
+            $this->buildChangelog();
+        }
+    }
+
+    public function buildChangelog()
+    {
+        $changelogContent = "Updated image reference docs.\n\n";
+        if (count($this->newImages)) {
+            $changelogContent .= "New images added:\n\n- ";
+            $changelogContent .= implode("\n- ", $this->newImages);
+        } else {
+            $changelogContent .= "No new images added.";
+        }
+        $this->saveFile($this->getParam('changelog'), $changelogContent);
     }
 
     public function buildImageDocs(string $image, string $outputDir): void
@@ -50,6 +67,7 @@ class ImagesController extends CommandController
 
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0777, true);
+            $this->newImages[] = $title;
         }
 
         //Build image index
