@@ -31,7 +31,7 @@ jobs:
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/${{ env.WORKDIR }}"
-          YAMLDOCS_TEMPLATES: "{{ github.workspace }}/autodocs/workdir/templates"
+          YAMLDOCS_TEMPLATES: "${{ github.workspace }}/autodocs/workdir/templates"
 
       - name: "Copy updates to main repo"
         run: |
