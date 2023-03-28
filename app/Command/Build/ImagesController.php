@@ -17,9 +17,9 @@ class ImagesController extends CommandController
      */
     public function handle(): void
     {
-        $source = getenv('YAMLDOCS_SOURCE') ?: __DIR__ . '/../../../workdir/yaml/images';
-        $output = getenv('YAMLDOCS_OUTPUT') ?: __DIR__ . '/../../../workdir/markdown/images/reference';
-        $tplDir = getenv('YAMLDOCS_TEMPLATES') ?: __DIR__ . '/../../../workdir/templates';
+        $source = getenv('YAMLDOCS_SOURCE') ? getenv('YAMLDOCS_SOURCE') : __DIR__ . '/../../../workdir/yaml/images';
+        $output = getenv('YAMLDOCS_OUTPUT') ? getenv('YAMLDOCS_OUTPUT') : __DIR__ . '/../../../workdir/markdown/images/reference';
+        $tplDir = getenv('YAMLDOCS_TEMPLATES') ? getenv('YAMLDOCS_TEMPLATES') :__DIR__ . '/../../../workdir/templates';
 
         $this->stencil = new Stencil($tplDir);
 
@@ -43,21 +43,26 @@ class ImagesController extends CommandController
             $this->buildImageDocs($image, $output);
         }
 
-        if ($this->hasParam('changelog')) {
-            $this->buildChangelog();
+        if ($this->hasFlag('changelog')) {
+            $changelogFile = getenv('YAMLDOCS_CHANGELOG') ? getenv('YAMLDOCS_CHANGELOG') : 'changelog.md';
+            $this->buildChangelog($output . '/' . $changelogFile);
+            $this->getPrinter()->info("Changelog saved to $changelogFile.");
         }
     }
 
-    public function buildChangelog()
+    public function buildChangelog(string $outputFile)
     {
-        $changelogContent = "Updated image reference docs.\n\n";
+        $changelogContent = "\n\n## " . date('Y-m-d' . "\n\n");
+        $changelogContent .= "Updated image reference docs.\n\n";
         if (count($this->newImages)) {
             $changelogContent .= "New images added:\n\n- ";
             $changelogContent .= implode("\n- ", $this->newImages);
         } else {
             $changelogContent .= "No new images added.";
         }
-        $this->saveFile($this->getParam('changelog'), $changelogContent);
+
+        $this->saveFile(dirname($outputFile) . '/latest-update.md', $changelogContent);
+        $this->appendToFile($outputFile, $changelogContent);
     }
 
     /**
@@ -113,5 +118,17 @@ class ImagesController extends CommandController
     public function saveFile(string $outputFile, string $content): void
     {
         file_put_contents($outputFile, $content);
+    }
+
+    /**
+     * @param string $outputFile
+     * @param string $content
+     * @return void
+     */
+    public function appendToFile(string $outputFile, string $content): void
+    {
+        $file = fopen($outputFile, "a");
+        fwrite($file , $content);
+        fclose($file);
     }
 }
