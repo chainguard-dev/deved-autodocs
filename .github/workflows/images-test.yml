@@ -55,5 +55,4 @@ jobs:
             images
             automated
           assignees: erikaheidi
-
- images-test.yml 
+          
