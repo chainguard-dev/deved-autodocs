@@ -3,9 +3,12 @@ on:
   workflow_dispatch:
 env:
   WORKDIR: images-reference
+  CHANGELOG: "${{ github.workspace }}/changelog.txt"
 jobs:
   main:
     runs-on: ubuntu-latest
+    outputs:
+      build-output: ${{ steps.images-build-output.changelog }}
     steps:
       - name: "Check out Destination Repo"
         uses: actions/checkout@v2
@@ -22,12 +25,13 @@ jobs:
         run: mkdir -p "${{ github.workspace }}/${{ env.WORKDIR }}" && chmod 777 "${{ github.workspace }}/${{ env.WORKDIR }}"
 
       - name: "Update the reference docs for Chainguard Images"
-        uses: chainguard-dev/deved-autodocs@1.0.5
+        uses: chainguard-dev/deved-autodocs@1.3.3
         with:
-          command: build images
+          command: "build images changelog=${{ env.CHANGELOG }}"
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/${{ env.WORKDIR }}"
+          YAMLDOCS_TEMPLATES: "{{ github.workspace }}/autodocs/workdir/templates"
 
       - name: "Copy updates to main repo"
         run: |
@@ -35,17 +39,21 @@ jobs:
           cp -R "${{ github.workspace }}/${{ env.WORKDIR }}" "${{ github.workspace }}/autodocs/workdir" && \
           echo "Finished copy" 
 
+      - name: "Get Changelog"
+        run: echo "changelog=`cat README.md`" >> "$GITHUB_OUTPUT"
+        id: images-build-output
+
       - name: Create a PR
         uses: peter-evans/create-pull-request@v4
         with:
           path: "${{ github.workspace }}/autodocs"
           commit-message: Update Images Reference
           title: "[AutoDocs] Update Images Reference Docs"
+          body: "${{ steps.images-build-output.changelog }}"
           signoff: true
           labels: |
             documentation
             images
             automated
           assignees: erikaheidi
-
 
