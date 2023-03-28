@@ -8,7 +8,7 @@ class PullRequestController extends CommandController
 {
     public function handle(): void
     {
-        $message = "A new automated pull request has been submitted and awaits review:";
+        $message = "A new automated pull request has been submitted and awaits review.";
         if (getenv('PR_CHANGED')) {
             $message .= "\nNumber of files changed: " . getenv('PR_CHANGED');
         }
