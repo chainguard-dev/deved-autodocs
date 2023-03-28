@@ -3,7 +3,6 @@
 namespace App\Command\Notify;
 
 use Minicli\Command\CommandController;
-use Minicli\Curly\Client;
 
 class PullRequestController extends CommandController
 {
@@ -14,17 +13,7 @@ class PullRequestController extends CommandController
             $message .= "\nNumber of files changed: " . getenv('PR_CHANGED');
         }
 
-        $url = "https://github.com/chainguard-dev/edu/pulls";
-        $prUrl = getenv('PR_URL');
-        //query api url for more info
-        $client = new Client();
-        $details = $client->get($prUrl);
-
-        if ($details['code'] === 200) {
-            $urlDetails = json_decode($details['body'], 1);
-            $url = $urlDetails['html_url'];
-        }
-          
+        $url = getenv('PR_URL') ?? "https://github.com/chainguard-dev/edu/pulls";
         $message .= "\nPull request URL: " . $url;
         
         $this->getApp()->runCommand(['autodocs', 'notify', 'slack', 'message=' . $message]);

@@ -3,6 +3,7 @@
 namespace App\Command\Build;
 
 use App\ImageOverview;
+use App\ImageSpecs;
 use Minicli\Command\CommandController;
 use Minicli\Stencil;
 
@@ -59,6 +60,9 @@ class ImagesController extends CommandController
         $this->saveFile($this->getParam('changelog'), $changelogContent);
     }
 
+    /**
+     * @throws \Minicli\FileNotFoundException
+     */
     public function buildImageDocs(string $image, string $outputDir): void
     {
         $overview = new ImageOverview($image);
@@ -88,6 +92,14 @@ class ImagesController extends CommandController
         $this->saveFile($outputDir . '/provenance_info.md', $this->stencil->applyTemplate('image_provenance_page', [
             'title' => $title,
             'description' => "Provenance information for $title Chainguard Images"
+        ]));
+
+        //Build specs page
+        $specs = new ImageSpecs($image);
+        $this->saveFile($outputDir . '/image_specs.md', $this->stencil->applyTemplate('image_specs_page', [
+            'title' => $title,
+            'description' => "Detailed specs for $title Chainguard Image Variants",
+            'content' => $specs->getContent()
         ]));
 
         $this->getPrinter()->info("Saved image pages: $outputDir");
