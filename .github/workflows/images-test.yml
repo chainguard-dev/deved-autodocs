@@ -40,7 +40,7 @@ jobs:
           echo "Finished copy" 
 
       - name: "Get Changelog"
-        run: echo "changelog=`cat README.md`" >> "$GITHUB_OUTPUT"
+        run: echo "changelog=`cat ${{ env.CHANGELOG }}`" >> "$GITHUB_OUTPUT"
         id: images-build-output
 
       - name: Create a PR
