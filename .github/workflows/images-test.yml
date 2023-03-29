@@ -49,7 +49,7 @@ jobs:
           echo "Finished copy"
 
       - name: "Get Changelog"
-        run: echo "changelog=`cat ${{ github.workspace }}/autodocs/workdir/last-update.md`" >> "$GITHUB_OUTPUT"
+        run: echo "changelog=`cat ${{ github.workspace }}/autodocs/last-update.md`" >> "$GITHUB_OUTPUT"
         id: images-build-output
 
       - name: Create a PR
