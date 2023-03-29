@@ -43,14 +43,21 @@ class ImagesController extends CommandController
             $this->buildImageDocs($image, $output);
         }
 
-        if ($this->hasFlag('changelog')) {
-            $changelogFile = getenv('YAMLDOCS_CHANGELOG') ? getenv('YAMLDOCS_CHANGELOG') : 'changelog.md';
-            $this->buildChangelog($output . '/' . $changelogFile);
+        $changes = $this->getChangelog();
+        if (getenv('YAMLDOCS_LAST_UPDATE')) {
+            $lastUpdateFile = getenv('YAMLDOCS_LAST_UPDATE');
+            $this->saveFile($lastUpdateFile, $changes);
+            $this->getPrinter()->info("Latest changes saved to $lastUpdateFile.");
+        }
+
+        if (getenv('YAMLDOCS_CHANGELOG')) {
+            $changelogFile = getenv('YAMLDOCS_CHANGELOG');
+            $this->appendToFile($changelogFile, $changes);
             $this->getPrinter()->info("Changelog saved to $changelogFile.");
         }
     }
 
-    public function buildChangelog(string $outputFile)
+    public function getChangelog(): string
     {
         $changelogContent = "\n\n## " . date('Y-m-d' . "\n\n");
         $changelogContent .= "Updated image reference docs.\n\n";
@@ -61,8 +68,7 @@ class ImagesController extends CommandController
             $changelogContent .= "No new images added.";
         }
 
-        $this->saveFile(dirname($outputFile) . '/latest-update.md', $changelogContent);
-        $this->appendToFile($outputFile, $changelogContent);
+        return $changelogContent;
     }
 
     /**
