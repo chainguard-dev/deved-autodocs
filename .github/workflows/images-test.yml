@@ -51,9 +51,9 @@ jobs:
       - name: "Get Changelog"
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "changelog<<$EOF" >> $GITHUB_OUTPUT
-          echo "`cat ${{ github.workspace }}/autodocs/last-update.md`" >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          echo "CHANGELOG<<$EOF" >> $GITHUB_ENV
+          echo "`cat ${{ github.workspace }}/autodocs/last-update.md`" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
         id: images-build-output
 
       - name: Create a PR
@@ -63,7 +63,7 @@ jobs:
           path: "${{ github.workspace }}/autodocs"
           commit-message: Update Images Reference
           title: "[AutoDocs] Update Images Reference Docs"
-          body: "${{ steps.images-build-output.changelog }}"
+          body: "${{ env.CHANGELOG }}"
           signoff: true
           labels: |
             documentation
@@ -84,4 +84,4 @@ jobs:
           PR_ACTION: ${{ steps.cpr.outputs.pull-request-operation }}
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
           PR_SHA: ${{ steps.cpr.outputs.pull-request-head-sha }}
-          PR_SUMMARY: ${{ steps.images-build-output.changelog }}
+          PR_SUMMARY: ${{ env.CHANGELOG }}
