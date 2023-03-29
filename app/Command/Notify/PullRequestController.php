@@ -8,13 +8,15 @@ class PullRequestController extends CommandController
 {
     public function handle(): void
     {
-        $message = "A new automated pull request has been submitted and awaits review.";
-        if (getenv('PR_CHANGED')) {
-            $message .= "\nNumber of files changed: " . getenv('PR_CHANGED');
-        }
+        $message = "A new autodocs pull request has been submitted and awaits review.";
 
         $url = getenv('PR_URL') ?? "https://github.com/chainguard-dev/edu/pulls";
         $message .= "\nPull request URL: " . $url;
+
+        if (getenv('PR_SUMMARY')) {
+            $message .= "\nSummary: \n";
+            $message .= getenv('PR_SUMMARY');
+        }
         
         $this->getApp()->runCommand(['autodocs', 'notify', 'slack', 'message=' . $message]);
     }
