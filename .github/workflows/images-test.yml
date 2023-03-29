@@ -28,19 +28,25 @@ jobs:
       - name: "Update the reference docs for Chainguard Images"
         uses: chainguard-dev/deved-autodocs@1.3.5
         with:
-          command: build images --changelog
+          command: build images
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/${{ env.WORKDIR }}"
           YAMLDOCS_TEMPLATES: "${{ github.workspace }}/autodocs/workdir/templates"
-          YAMLDOCS_CHANGELOG: "${{ github.workspace }}/autodocs/workdir/changelog.md"
-          YAMLDOCS_LAST_UPDATE: "${{ github.workspace }}/autodocs/workdir/last-update.md"
+          YAMLDOCS_CHANGELOG: "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md"
+          YAMLDOCS_LAST_UPDATE: "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md"
+
+      - name: "Copy changelog to root folder"
+        run: |
+          mv "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md" \
+          "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md" \
+          "${{ github.workspace }}/autodocs"
 
       - name: "Copy updates to main repo"
         run: |
           echo "Copying files..." && \
           cp -R "${{ github.workspace }}/${{ env.WORKDIR }}" "${{ github.workspace }}/autodocs/workdir" && \
-          echo "Finished copy" 
+          echo "Finished copy"
 
       - name: "Get Changelog"
         run: echo "changelog=`cat ${{ github.workspace }}/autodocs/workdir/last-update.md`" >> "$GITHUB_OUTPUT"
@@ -63,7 +69,7 @@ jobs:
 
       - name: "Send notification to Slack"
         if: ${{ steps.cpr.outputs.pull-request-number }}
-        uses: chainguard-dev/deved-autodocs@1.3.2
+        uses: chainguard-dev/deved-autodocs@1.3.5
         with:
           command: notify pullrequest
         env:
