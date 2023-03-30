@@ -26,7 +26,7 @@ jobs:
           chmod 777 "${{ github.workspace }}/${{ env.WORKDIR }}"
 
       - name: "Update the reference docs for Chainguard Images"
-        uses: chainguard-dev/deved-autodocs@1.3.5
+        uses: chainguard-dev/deved-autodocs@1.3.6
         with:
           command: build images
         env:
@@ -35,6 +35,7 @@ jobs:
           YAMLDOCS_TEMPLATES: "${{ github.workspace }}/autodocs/workdir/templates"
           YAMLDOCS_CHANGELOG: "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md"
           YAMLDOCS_LAST_UPDATE: "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md"
+          YAMLDOCS_DIFF_SOURCE: "${{ github.workspace }}/autodocs/workdir/{{ env.WORKDIR }}"
 
       - name: "Copy changelog to root folder"
         run: |
@@ -73,7 +74,7 @@ jobs:
 
       - name: "Send notification to Slack"
         if: ${{ steps.cpr.outputs.pull-request-number }}
-        uses: chainguard-dev/deved-autodocs@1.3.5
+        uses: chainguard-dev/deved-autodocs@1.3.6
         with:
           command: notify pullrequest
         env:
@@ -85,3 +86,4 @@ jobs:
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
           PR_SHA: ${{ steps.cpr.outputs.pull-request-head-sha }}
           PR_SUMMARY: ${{ env.CHANGELOG }}
+          
