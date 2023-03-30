@@ -1,14 +1,16 @@
 name: Send Slack Notification about new Autodocs PR
+
 on:
   pull_request:
   workflow_dispatch:
+
 jobs:
   main:
-    if:  startsWith(github.head_ref, 'create-pull-request/')
+    if: startsWith(github.head_ref, 'create-pull-request/')
     runs-on: ubuntu-latest
     steps:
       - name: "Send notification to Slack"
-        uses: chainguard-dev/deved-autodocs@1.3.2
+        uses: chainguard-dev/deved-autodocs@37cc961b71c9b6c1eaf4e0ad5f2e5a66ba94918c # 1.3.6
         with:
           command: notify pullrequest
         env:
