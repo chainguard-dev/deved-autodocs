@@ -3,7 +3,6 @@ on:
   workflow_dispatch:
 env:
   WORKDIR: images-reference
-  CHANGELOG: "${{ github.workspace }}/changelog.txt"
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -22,34 +21,50 @@ jobs:
           path: images
 
       - name: "Set up workdir"
-        run: mkdir -p "${{ github.workspace }}/${{ env.WORKDIR }}" && chmod 777 "${{ github.workspace }}/${{ env.WORKDIR }}"
+        run: |
+          mkdir -p "${{ github.workspace }}/${{ env.WORKDIR }}" && \
+          chmod 777 "${{ github.workspace }}/${{ env.WORKDIR }}"
 
       - name: "Update the reference docs for Chainguard Images"
-        uses: chainguard-dev/deved-autodocs@1.0.5
+        uses: chainguard-dev/deved-autodocs@1.3.6
         with:
-          command: "build images changelog=${{ env.CHANGELOG }}"
+          command: build images
         env:
           YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/${{ env.WORKDIR }}"
-          YAMLDOCS_TEMPLATES: "{{ github.workspace }}/autodocs/templates"
+          YAMLDOCS_TEMPLATES: "${{ github.workspace }}/autodocs/workdir/templates"
+          YAMLDOCS_CHANGELOG: "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md"
+          YAMLDOCS_LAST_UPDATE: "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md"
+          YAMLDOCS_DIFF_SOURCE: "${{ github.workspace }}/autodocs/workdir/{{ env.WORKDIR }}"
+
+      - name: "Copy changelog to root folder"
+        run: |
+          mv "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md" \
+          "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md" \
+          "${{ github.workspace }}/autodocs"
 
       - name: "Copy updates to main repo"
         run: |
           echo "Copying files..." && \
           cp -R "${{ github.workspace }}/${{ env.WORKDIR }}" "${{ github.workspace }}/autodocs/workdir" && \
-          echo "Finished copy" 
+          echo "Finished copy"
 
       - name: "Get Changelog"
-        run: echo "changelog=`cat README.md`" >> "$GITHUB_OUTPUT"
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "CHANGELOG<<$EOF" >> $GITHUB_ENV
+          echo "`cat ${{ github.workspace }}/autodocs/last-update.md`" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
         id: images-build-output
 
       - name: Create a PR
+        id: cpr
         uses: peter-evans/create-pull-request@v4
         with:
           path: "${{ github.workspace }}/autodocs"
           commit-message: Update Images Reference
           title: "[AutoDocs] Update Images Reference Docs"
-          body: "${{ steps.images-build-output.changelog }}"
+          body: "${{ env.CHANGELOG }}"
           signoff: true
           labels: |
             documentation
@@ -57,3 +72,17 @@ jobs:
             automated
           assignees: erikaheidi
 
+      - name: "Send notification to Slack"
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        uses: chainguard-dev/deved-autodocs@1.3.5
+        with:
+          command: notify pullrequest
+        env:
+          AUTODOCS_SLACK_PRIMARY: ${{ secrets.AUTODOCS_SLACK_PRIMARY }}
+          AUTODOCS_SLACK_SECONDARY: ${{ secrets.AUTODOCS_SLACK_SECONDARY }}
+          AUTODOCS_SLACK_GENERAL: ${{ secrets.AUTODOCS_SLACK_GENERAL }}
+          PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
+          PR_ACTION: ${{ steps.cpr.outputs.pull-request-operation }}
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+          PR_SHA: ${{ steps.cpr.outputs.pull-request-head-sha }}
+          PR_SUMMARY: ${{ env.CHANGELOG }}

@@ -11,7 +11,7 @@ class ImagesController extends CommandController
 {
     protected Stencil $stencil;
     public array $newImages = [];
-
+    public string $diffSource;
     /**
      * @throws \Minicli\FileNotFoundException
      */
@@ -19,7 +19,10 @@ class ImagesController extends CommandController
     {
         $source = getenv('YAMLDOCS_SOURCE') ? getenv('YAMLDOCS_SOURCE') : __DIR__ . '/../../../workdir/yaml/images';
         $output = getenv('YAMLDOCS_OUTPUT') ? getenv('YAMLDOCS_OUTPUT') : __DIR__ . '/../../../workdir/markdown/images/reference';
-        $tplDir = getenv('YAMLDOCS_TEMPLATES') ? getenv('YAMLDOCS_TEMPLATES') :__DIR__ . '/../../../workdir/templates';
+        $tplDir = getenv('YAMLDOCS_TEMPLATES') ? getenv('YAMLDOCS_TEMPLATES') : __DIR__ . '/../../../workdir/templates';
+        $this->diffSource = getenv('YAMLDOCS_DIFF_SOURCE') ? getenv('YAMLDOCS_DIFF_SOURCE') : $output;
+
+        echo "diff with: " . $this->diffSource;
 
         $this->stencil = new Stencil($tplDir);
 
@@ -82,6 +85,9 @@ class ImagesController extends CommandController
 
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0777, true);
+        }
+
+        if (!is_dir($this->diffSource . '/' . basename($image))) {
             $this->newImages[] = $title;
         }
 
