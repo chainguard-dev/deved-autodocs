@@ -5,7 +5,10 @@ on:
 
 env:
   WORKDIR: images-reference
+<<<<<<< HEAD
 
+=======
+>>>>>>> 83e9fe6 (updated example workflow)
 jobs:
   main:
     runs-on: ubuntu-latest
