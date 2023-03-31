@@ -5,7 +5,7 @@ on:
 
 env:
   WORKDIR: images-reference
-
+  
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -29,11 +29,7 @@ jobs:
           chmod 777 "${{ github.workspace }}/${{ env.WORKDIR }}"
 
       - name: "Update the reference docs for Chainguard Images"
-<<<<<<< HEAD
         uses: chainguard-dev/deved-autodocs@37cc961b71c9b6c1eaf4e0ad5f2e5a66ba94918c # 1.3.6
-=======
-        uses: chainguard-dev/deved-autodocs@1.3.6
->>>>>>> 28ad5b7 (Updated changelog build to use custom source path)
         with:
           command: build images
         env:
@@ -92,8 +88,4 @@ jobs:
           PR_ACTION: ${{ steps.cpr.outputs.pull-request-operation }}
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
           PR_SHA: ${{ steps.cpr.outputs.pull-request-head-sha }}
-<<<<<<< HEAD
           PR_SUMMARY: ${{ env.CHANGELOG }}
-=======
-          PR_SUMMARY: ${{ env.CHANGELOG }}
->>>>>>> 28ad5b7 (Updated changelog build to use custom source path)
