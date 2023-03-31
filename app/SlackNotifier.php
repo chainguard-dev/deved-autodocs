@@ -28,7 +28,7 @@ class SlackNotifier
 
         return $this->client->post(
             $slackEndpoint,
-            ['text' => $message],
+            ['text' => $message, 'type' => 'mrkdwn'],
             ['Content-type: application/json']
         );
     }

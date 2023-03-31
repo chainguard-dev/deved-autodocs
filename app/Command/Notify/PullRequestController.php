@@ -14,8 +14,7 @@ class PullRequestController extends CommandController
         $message .= "\nPull request URL: " . $url;
 
         if (getenv('PR_SUMMARY')) {
-            $message .= "\nSummary: \n";
-            $message .= getenv('PR_SUMMARY');
+            $message .= "\n" .getenv('PR_SUMMARY');
         }
         
         $this->getApp()->runCommand(['autodocs', 'notify', 'slack', 'message=' . $message]);

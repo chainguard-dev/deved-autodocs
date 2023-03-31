@@ -22,8 +22,6 @@ class ImagesController extends CommandController
         $tplDir = getenv('YAMLDOCS_TEMPLATES') ? getenv('YAMLDOCS_TEMPLATES') : __DIR__ . '/../../../workdir/templates';
         $this->diffSource = getenv('YAMLDOCS_DIFF_SOURCE') ? getenv('YAMLDOCS_DIFF_SOURCE') : $output;
 
-        echo "diff with: " . $this->diffSource;
-
         $this->stencil = new Stencil($tplDir);
 
         if (!is_dir($output)) {
@@ -62,7 +60,7 @@ class ImagesController extends CommandController
 
     public function getChangelog(): string
     {
-        $changelogContent = "\n\n## " . date('Y-m-d' . "\n\n");
+        $changelogContent = "## " . date('Y-m-d' . "\n\n");
         $changelogContent .= "Updated image reference docs.\n\n";
         if (count($this->newImages)) {
             $changelogContent .= "New images added:\n\n- ";
@@ -139,8 +137,11 @@ class ImagesController extends CommandController
      */
     public function appendToFile(string $outputFile, string $content): void
     {
-        $file = fopen($outputFile, "a");
-        fwrite($file , $content);
-        fclose($file);
+        $fileContent = "";
+        if (is_file($outputFile)) {
+            $fileContent = file_get_contents($outputFile);
+        }
+
+        $this->saveFile($outputFile, $content . "\n\n" . $fileContent);
     }
 }
