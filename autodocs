@@ -10,13 +10,13 @@ require __DIR__ . '/vendor/autoload.php';
 use Minicli\App;
 use Minicli\Exception\CommandNotFoundException;
 
-$app = new App([
+$config = include __DIR__ . '/config.php';
+$app = new App(array_merge([
     'app_path' => [
         __DIR__ . '/app/Command',
         '@minicli/command-help'
-    ],
-    'debug' => true
-]);
+    ]
+], $config));
 
 $app->setSignature('./autodocs help');
 
