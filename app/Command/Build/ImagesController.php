@@ -5,6 +5,7 @@ namespace App\Command\Build;
 use App\ImageOverview;
 use App\ImageSpecs;
 use Minicli\Command\CommandController;
+use Minicli\FileNotFoundException;
 use Minicli\Stencil;
 
 class ImagesController extends CommandController
@@ -12,21 +13,29 @@ class ImagesController extends CommandController
     protected Stencil $stencil;
     public array $newImages = [];
     public string $diffSource;
+    public string $changelog;
+    public string $lastUpdate;
+
     /**
-     * @throws \Minicli\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function handle(): void
     {
-        $source = getenv('YAMLDOCS_SOURCE') ? getenv('YAMLDOCS_SOURCE') : __DIR__ . '/../../../workdir/yaml/images';
-        $output = getenv('YAMLDOCS_OUTPUT') ? getenv('YAMLDOCS_OUTPUT') : __DIR__ . '/../../../workdir/markdown/images/reference';
-        $tplDir = getenv('YAMLDOCS_TEMPLATES') ? getenv('YAMLDOCS_TEMPLATES') : __DIR__ . '/../../../workdir/templates';
-        $this->diffSource = getenv('YAMLDOCS_DIFF_SOURCE') ? getenv('YAMLDOCS_DIFF_SOURCE') : $output;
+        $imagesConfig = $this->getApp()->config->imagesReference;
+        $source = $imagesConfig['source'];
+        $output = $imagesConfig['output'];
+        $tplDir = $imagesConfig['templates'];
 
+        $this->diffSource = $imagesConfig['diffSource'];
+        $this->changelog = $imagesConfig['changelog'];
+        $this->lastUpdate = $imagesConfig['lastUpdate'];
         $this->stencil = new Stencil($tplDir);
 
         if (!is_dir($output)) {
             mkdir($output, 0777, true);
         }
+
+        $this->getPrinter()->out("Using $this->diffSource as Diff Source.\n");
 
         //Build reference index
         $this->saveFile($output . '/_index.md', $this->stencil->applyTemplate('_index_page', [
@@ -35,29 +44,29 @@ class ImagesController extends CommandController
             'content' => "Reference docs for Chainguard Images"
         ]));
 
+        //Build docs for a single image
         if ($this->hasParam('image')) {
             $this->buildImageDocs($source . '/' . $this->getParam('image'), $output);
             return;
         }
 
+        //Build docs for all images
         foreach (glob($source . '/*') as $image) {
             $this->buildImageDocs($image, $output);
         }
 
         $changes = $this->getChangelog();
-        if (getenv('YAMLDOCS_LAST_UPDATE')) {
-            $lastUpdateFile = getenv('YAMLDOCS_LAST_UPDATE');
-            $this->saveFile($lastUpdateFile, $changes);
-            $this->getPrinter()->info("Latest changes saved to $lastUpdateFile.");
-        }
+        $this->saveFile($this->lastUpdate, $changes);
+        $this->getPrinter()->info("Latest changes saved to $this->lastUpdate.");
 
-        if (getenv('YAMLDOCS_CHANGELOG')) {
-            $changelogFile = getenv('YAMLDOCS_CHANGELOG');
-            $this->appendToFile($changelogFile, $changes);
-            $this->getPrinter()->info("Changelog saved to $changelogFile.");
-        }
+
+        $this->appendToFile($this->changelog, $changes);
+        $this->getPrinter()->info("Changelog saved to $this->changelog.");
     }
 
+    /**
+     * @return string
+     */
     public function getChangelog(): string
     {
         $changelogContent = "## " . date('Y-m-d' . "\n\n");
@@ -73,7 +82,7 @@ class ImagesController extends CommandController
     }
 
     /**
-     * @throws \Minicli\FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function buildImageDocs(string $image, string $outputDir): void
     {
@@ -81,12 +90,12 @@ class ImagesController extends CommandController
         $outputDir = $outputDir . '/' . basename($image);
         $title = basename($image);
 
-        if (!is_dir($outputDir)) {
-            mkdir($outputDir, 0777, true);
-        }
-
         if (!is_dir($this->diffSource . '/' . basename($image))) {
             $this->newImages[] = $title;
+        }
+
+        if (!is_dir($outputDir)) {
+            mkdir($outputDir, 0777, true);
         }
 
         //Build image index
