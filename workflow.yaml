@@ -5,7 +5,7 @@ on:
 
 env:
   WORKDIR: images-reference
-  
+
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -33,18 +33,16 @@ jobs:
         with:
           command: build images
         env:
-          YAMLDOCS_SOURCE: "${{ github.workspace }}/images/images"
+          YAMLDOCS_IMAGES_SOURCE: "${{ github.workspace }}/images/images"
+          YAMLDOCS_DIFF_SOURCE: "${{ github.workspace }}/autodocs/workdir/{{ env.WORKDIR }}"
           YAMLDOCS_OUTPUT: "${{ github.workspace }}/${{ env.WORKDIR }}"
           YAMLDOCS_TEMPLATES: "${{ github.workspace }}/autodocs/workdir/templates"
-          YAMLDOCS_CHANGELOG: "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md"
-          YAMLDOCS_LAST_UPDATE: "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md"
-          YAMLDOCS_DIFF_SOURCE: "${{ github.workspace }}/autodocs/workdir/{{ env.WORKDIR }}"
 
-      - name: "Copy changelog to root folder"
+      - name: "Copy Changelog update to main repo"
         run: |
-          mv "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md" \
-          "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md" \
-          "${{ github.workspace }}/autodocs"
+          mv "${{ github.workspace }}/${{ env.WORKDIR }}/last-update.md" \
+            "${{ github.workspace }}/${{ env.WORKDIR }}/changelog.md" \
+            "${{ github.workspace }}/autodocs"
 
       - name: "Copy updates to main repo"
         run: |
@@ -52,13 +50,12 @@ jobs:
           cp -R "${{ github.workspace }}/${{ env.WORKDIR }}" "${{ github.workspace }}/autodocs/workdir" && \
           echo "Finished copy"
 
-      - name: "Get Changelog"
+      - name: "Get Latest Changelog Update"
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "CHANGELOG<<$EOF" >> $GITHUB_ENV
           echo "`cat ${{ github.workspace }}/autodocs/last-update.md`" >> $GITHUB_ENV
           echo "$EOF" >> $GITHUB_ENV
-        id: images-build-output
 
       - name: Create a PR
         id: cpr
