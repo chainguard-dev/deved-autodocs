@@ -1,25 +1,27 @@
 <?php
 
-namespace App;
+namespace App\Page;
 
+use Yamldocs\Mark;
 use Symfony\Component\Yaml\Yaml;
 
-class ImageSpecs
+class ImageSpecs implements ReferencePage
 {
     public string $imageName;
     public string $imagePath;
-    public array $imageConfig;
-    public array $variants;
-    public array $globalOptions;
+    public array $imageConfig = [];
+    public array $variants = [];
+    public array $globalOptions = [];
 
-    public function __construct(string $image)
+    public function buildDataMatrix(string $image): void
     {
         $this->imagePath = $image;
         $this->imageName = basename($this->imagePath);
         $this->imageConfig = $this->loadYaml($this->imagePath . '/image.yaml');
         //check for global options
         if (is_file($this->imagePath . '/../../globals.yaml')) {
-            $this->globalOptions = $this->loadYaml($this->imagePath . '/../../globals.yaml');
+            $globals = $this->loadYaml($this->imagePath . '/../../globals.yaml');
+            $this->globalOptions = $globals['options'] ?? [];
         }
         $variants = [];
 
@@ -36,8 +38,8 @@ class ImageSpecs
                     $variants[$subvariantName] = $variants[$variantName];
 
                     $extraOptions = isset($this->imageConfig['options'])
-                        ? array_merge($this->globalOptions['options'], $this->imageConfig['options'])
-                        : $this->globalOptions['options'];
+                        ? array_merge($this->globalOptions, $this->imageConfig['options'])
+                        : $this->globalOptions;
 
                     foreach ($subvariant['options'] as $option) {
                         if (!isset($extraOptions[$option])) {
@@ -68,8 +70,10 @@ class ImageSpecs
         return Yaml::parseFile($path);
     }
 
-    public function getContent(): string
+    public function getContent(string $image): string
     {
+        $this->buildDataMatrix($image);
+
         $content = "";
         $headers = [''];
         $columns[] = [
@@ -218,5 +222,10 @@ class ImageSpecs
         $content .= Mark::table($tableRows, $headers);
 
         return $content;
+    }
+
+    public function getSaveName(string $image): string
+    {
+        return 'image_specs.md';
     }
 }

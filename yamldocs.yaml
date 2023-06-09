@@ -1,4 +1,21 @@
 builders:
-  default: Builders\DefaultBuilder
-  melange-pipeline: App\Builders\Melange\PipelineReference
-  templatesDir: templates
+  - name: default
+    class: Yamldocs\Builder\DefaultBuilder
+
+  - name: melange-pipelines
+    class: App\Builder\Melange\PipelineReference
+    source: workdir/yaml/pipelines
+    output: workdir/markdown/pipelines
+
+  - name: images-reference
+    class: App\Builder\ImageReferenceBuilder
+    source: workdir/yaml/images
+    output: workdir/markdown/images/reference
+    changelog: workdir/markdown/images/reference/changelog.md
+    lastUpdate: workdir/markdown/images/reference/last-update.md
+    pages:
+      - App\Page\ImageOverview
+      - App\Page\ImageSpecs
+
+templatesDir: templates
+debug: true

@@ -8,7 +8,7 @@ class DefaultController extends CommandController
 {
     public function handle(): void
     {
-        $this->getPrinter()->info("Example:", true);
-        $this->getPrinter()->info("./autodocs build images");
+        $this->info("Example:", true);
+        $this->info("./autodocs build images");
     }
 }

@@ -7,16 +7,21 @@ if (php_sapi_name() !== 'cli') {
 
 require __DIR__ . '/vendor/autoload.php';
 
+use App\Service\AutodocsService;
 use Minicli\App;
 use Minicli\Exception\CommandNotFoundException;
+use Yamldocs\YamldocsConfig;
 
-$config = include __DIR__ . '/config.php';
+$config = new YamldocsConfig();
+$config->load(__DIR__ . '/yamldocs.yaml');
 $app = new App(array_merge([
     'app_path' => [
         __DIR__ . '/app/Command',
         '@minicli/command-help'
     ]
-], $config));
+], $config->parameters));
+
+$app->addService('builder', new AutodocsService());
 
 $app->setSignature('./autodocs help');
 
@@ -28,12 +33,12 @@ if (getenv('INPUT_COMMAND')) {
 try {
     $app->runCommand($input);
 } catch (CommandNotFoundException $notFoundException) {
-    $app->getPrinter()->error("Command Not Found.");
+    $app->error("Command Not Found.");
     return 1;
 } catch (Exception $exception) {
     if ($app->config->debug) {
-        $app->getPrinter()->error("An error occurred:");
-        $app->getPrinter()->error($exception->getMessage());
+        $app->error("An error occurred:");
+        $app->error($exception->getMessage());
     }
     return 1;
 }
