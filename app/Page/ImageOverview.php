@@ -1,35 +1,32 @@
 <?php
 
-namespace App;
+namespace App\Page;
 
-class ImageOverview
+use Yamldocs\Mark;
+use App\ReadmeReader;
+use App\TagsReader;
+
+class ImageOverview implements ReferencePage
 {
-    public string $imagePath;
-
-    public function __construct(string $image)
-    {
-        $this->imagePath = $image;
-    }
-
     public function code($str): string
     {
         return sprintf("`%s`", $str);
     }
 
     /**
+     * @param string $image
      * @return string
-     * @throws \Exception
      */
-    public function getContent(): string
+    public function getContent(string $image): string
     {
-        $readme = ReadmeReader::getContent($this->imagePath . '/README.md');
+        $readme = ReadmeReader::getContent($image . '/README.md');
         try {
-            $imageMeta = TagsReader::getTags(basename($this->imagePath));
+            $imageMeta = TagsReader::getTags(basename($image));
         } catch (\Exception $e) {
             return "";
         }
 
-        $reference = '`' . $imageMeta['status'] . '` ' .  '[' . $imageMeta['ref'] . '](https://github.com/chainguard-images/images/tree/main/images/' . basename($this->imagePath) . ')';
+        $reference = '`' . $imageMeta['status'] . '` ' .  '[' . $imageMeta['ref'] . '](https://github.com/chainguard-images/images/tree/main/images/' . basename($image) . ')';
 
         $rows = [];
         foreach ($imageMeta['tags'] as $tag) {
@@ -42,5 +39,10 @@ class ImageOverview
         $tagsTable = Mark::table($rows, ['Tags', 'Aliases']);
 
         return $reference . "\n" . $tagsTable . "\n" . $readme;
+    }
+
+    public function getSaveName(string $image): string
+    {
+        return 'overview.md';
     }
 }

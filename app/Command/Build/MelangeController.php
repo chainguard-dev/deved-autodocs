@@ -2,16 +2,24 @@
 
 namespace App\Command\Build;
 
+use App\Builder\Melange\PipelineReference;
+use App\Service\AutodocsService;
 use Minicli\Command\CommandController;
 
 class MelangeController extends CommandController
 {
+    /**
+     * @throws \Exception
+     */
     public function handle(): void
     {
-        $source = getenv('YAMLDOCS_SOURCE') ?: __DIR__ . '/../../../workdir/yaml/pipelines';
-        $output = getenv('YAMLDOCS_OUTPUT') ?: __DIR__ . '/../../../workdir/markdown/melange-pipelines';
-        $yamldocs = __DIR__ . '/../../../vendor/erikaheidi/yamldocs/bin/yamldocs';
+        /** @var AutodocsService $builderService */
+        $builderService = $this->getApp()->builder;
+        /** @var PipelineReference $pipelineBuilder */
+        $pipelineBuilder = $builderService->getBuilder('melange-pipelines');
 
-        echo shell_exec("$yamldocs build docs source=$source output=$output builder=melange-pipeline --recursive");
+        $this->info("Starting build...");
+        $pipelineBuilder->buildRecursive();
+        $this->info("Build finished with output saved to $pipelineBuilder->outputPath.");
     }
 }
