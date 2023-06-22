@@ -2,12 +2,28 @@
 
 namespace App\Page;
 
+use App\Service\ImageDiscoveryService;
+use Minicli\App;
+use Minicli\Stencil;
 use Yamldocs\Mark;
 use App\ReadmeReader;
-use App\TagsReader;
 
 class ImageOverview implements ReferencePage
 {
+    public ImageDiscoveryService $imageDiscovery;
+    public Stencil $stencil;
+
+    public static string $DEFAULT_REGISTRY='cgr.dev/chainguard';
+
+    /**
+     * @throws \Exception
+     */
+    public function load(App $app): void
+    {
+        $this->imageDiscovery = $app->imageDiscovery;
+        $this->stencil = new Stencil($app->config->templatesDir);
+    }
+
     public function code($str): string
     {
         return sprintf("`%s`", $str);
@@ -16,29 +32,21 @@ class ImageOverview implements ReferencePage
     /**
      * @param string $image
      * @return string
+     * @throws \Exception
      */
     public function getContent(string $image): string
     {
         $readme = ReadmeReader::getContent($image . '/README.md');
-        try {
-            $imageMeta = TagsReader::getTags(basename($image));
-        } catch (\Exception $e) {
-            return "";
-        }
+        $imageRepoInfo = $this->imageDiscovery->getRepoInfo(basename($image));
+        $reference = '` [' . self::$DEFAULT_REGISTRY . '/' . basename($image) . ']' . '(https://github.com/chainguard-images/images/tree/main/images/' . basename($image) . ')';
 
-        $reference = '`' . $imageMeta['status'] . '` ' .  '[' . $imageMeta['ref'] . '](https://github.com/chainguard-images/images/tree/main/images/' . basename($image) . ')';
+        $content = $reference . "\n" . $readme;
 
-        $rows = [];
-        foreach ($imageMeta['tags'] as $tag) {
-            $rows[] = [
-                '`' . $tag['primary'] . '`',
-                implode(', ', array_map(array($this, 'code'), $tag['dynamic']['resolved']))
-            ];
-        }
-
-        $tagsTable = Mark::table($rows, ['Tags', 'Aliases']);
-
-        return $reference . "\n" . $tagsTable . "\n" . $readme;
+        return $this->stencil->applyTemplate('image_reference_page', [
+            'title' => "Image Overview: " . basename($image),
+            'description' => "Overview: " . basename($image) . " Chainguard Image",
+            'content' => $content,
+        ]);
     }
 
     public function getSaveName(string $image): string

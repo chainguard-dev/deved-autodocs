@@ -8,8 +8,8 @@ class DefaultController extends CommandController
 {
     public function handle(): void
     {
-        $this->getPrinter()->info("Copies generated docs to other locations.", true);
-        $this->getPrinter()->info("Example:");
-        $this->getPrinter()->info("./autodocs copy images");
+        $this->info("Copies generated docs to other locations.", true);
+        $this->info("Example:");
+        $this->info("./autodocs copy images");
     }
 }

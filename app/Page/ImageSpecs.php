@@ -2,78 +2,28 @@
 
 namespace App\Page;
 
+use App\Service\ImageDiscoveryService;
+use Minicli\App;
+use Minicli\Stencil;
 use Yamldocs\Mark;
-use Symfony\Component\Yaml\Yaml;
 
 class ImageSpecs implements ReferencePage
 {
     public string $imageName;
-    public string $imagePath;
-    public array $imageConfig = [];
-    public array $variants = [];
-    public array $globalOptions = [];
+    public ImageDiscoveryService $imageDiscovery;
+    public Stencil $stencil;
 
-    public function buildDataMatrix(string $image): void
+    public function load(App $app): void
     {
-        $this->imagePath = $image;
-        $this->imageName = basename($this->imagePath);
-        $this->imageConfig = $this->loadYaml($this->imagePath . '/image.yaml');
-        //check for global options
-        if (is_file($this->imagePath . '/../../globals.yaml')) {
-            $globals = $this->loadYaml($this->imagePath . '/../../globals.yaml');
-            $this->globalOptions = $globals['options'] ?? [];
-        }
-        $variants = [];
-
-        foreach ($this->imageConfig['versions'] as $variant) {
-            $config = $variant['apko']['config'];
-            $variantName = basename($config, '.apko.yaml');
-            $variants[$variantName] = $this->loadYaml($this->imagePath . "/$config");
-
-            if (isset($variant['apko']['subvariants'])) {
-                //image has subvariants
-                foreach ($variant['apko']['subvariants'] as $subvariant) {
-                    //unfurl subvariant options
-                    $subvariantName = $variantName . $subvariant['suffix'];
-                    $variants[$subvariantName] = $variants[$variantName];
-
-                    $extraOptions = isset($this->imageConfig['options'])
-                        ? array_merge($this->globalOptions, $this->imageConfig['options'])
-                        : $this->globalOptions;
-
-                    foreach ($subvariant['options'] as $option) {
-                        if (!isset($extraOptions[$option])) {
-                            continue;
-                        }
-
-                        if (isset($extraOptions[$option]['contents']['packages']['add'])) {
-                            $variants[$subvariantName]['contents']['packages'] = array_merge(
-                                $variants[$subvariantName]['contents']['packages'],
-                                $extraOptions[$option]['contents']['packages']['add']
-                            );
-                        }
-
-                        if (isset($extraOptions[$option]['entrypoint'])) {
-                            $variants[$subvariantName]['entrypoint'] = $extraOptions[$option]['entrypoint'];
-                        }
-                    }
-                }
-            }
-
-        }
-
-        $this->variants = $variants;
+        $this->imageDiscovery = $app->imageDiscovery;
+        $this->stencil = new Stencil($app->config->templatesDir);
     }
 
-    public function loadYaml(string $path): array
-    {
-        return Yaml::parseFile($path);
-    }
-
+    /**
+     * @throws \Exception
+     */
     public function getContent(string $image): string
     {
-        $this->buildDataMatrix($image);
-
         $content = "";
         $headers = [''];
         $columns[] = [
@@ -85,10 +35,11 @@ class ImageSpecs implements ReferencePage
             'Has a shell?',
         ];
 
-        $packages = [];
-        $variants = [];
+        $this->imageName = basename($image);
+        $packages = $variants = [];
+        $variantsData = $this->imageDiscovery->getImageMetaData($image);
 
-        foreach ($this->variants as $variant => $config) {
+        foreach ($variantsData as $variant => $config) {
             $headers[] = $variants[] = $variant;
             $columns[] = [
                 $this->getDefaultUser($config),
@@ -109,12 +60,11 @@ class ImageSpecs implements ReferencePage
         $content .= $this->getVariantsSection($variants, $columns, $headers);
         $content .= $this->getDependenciesSection($packages, $headers);
 
-        return $content;
-    }
-
-    public function getPackagesList(array $yamlConfig): string
-    {
-        return implode('<br/>', $yamlConfig['contents']['packages']);
+        return $this->stencil->applyTemplate('image_specs_page', [
+            'title' => basename($image),
+            'description' => "Image variants and tag information for the " . basename($image) . " Chainguard Image",
+            'content' => $content,
+        ]);
     }
 
     public function getEntrypoint(array $yamlConfig): string
