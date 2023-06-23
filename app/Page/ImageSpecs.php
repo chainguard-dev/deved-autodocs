@@ -61,8 +61,8 @@ class ImageSpecs implements ReferencePage
         $content .= $this->getDependenciesSection($packages, $headers);
 
         return $this->stencil->applyTemplate('image_specs_page', [
-            'title' => basename($image),
-            'description' => "Image variants and tag information for the " . basename($image) . " Chainguard Image",
+            'title' => ucfirst(basename($image)),
+            'description' => "Detailed information about the " . ucfirst(basename($image)) . "Chainguard Image variants",
             'content' => $content,
         ]);
     }
@@ -150,6 +150,7 @@ class ImageSpecs implements ReferencePage
         }
 
         $content .= Mark::table($tableRows, $headers);
+        $content .= "\nCheck the [tags history page](/chainguard/chainguard-images/reference/" . $this->imageName . "/tags_history/) for the full list of available tags.";
 
         return $content;
     }
