@@ -39,7 +39,13 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+use Minicli\App;
+use Minicli\Command\CommandCall;
+use Yamldocs\YamldocsConfig;
+
+function getApp(): App
 {
-    // ..
+    $config = new YamldocsConfig();
+    $config->load(__DIR__ . '/../yamldocs.yaml');
+    return new App($config->parameters);
 }

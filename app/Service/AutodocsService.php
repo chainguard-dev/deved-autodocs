@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Builder\ImageReferenceBuilder;
 use Minicli\App;
 use Yamldocs\BuilderService;
+use Yamldocs\YamldocsConfig;
 
 class AutodocsService extends BuilderService
 {
@@ -20,8 +21,13 @@ class AutodocsService extends BuilderService
 
         foreach ($imageBuilder->builderOptions['pages'] as $pageClass) {
             $page = new $pageClass;
-            $page->load($app);
+            $page->load($app, $this);
             $imageBuilder->registerPage($page);
         }
+    }
+
+    public function boot(): void
+    {
+        //
     }
 }

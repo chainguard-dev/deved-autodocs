@@ -28,12 +28,15 @@ class ImageReferenceBuilder extends DefaultBuilder
         $this->diffSourcePath = $this->builderOptions['diffSource'] ?? $this->outputPath;
         $this->changelogPath = $this->builderOptions['changelog'];
         $this->lastUpdatePath = $this->builderOptions['lastUpdate'];
-        $this->stencil = new Stencil($this->templatesDir);
+        $this->loadEnvOverwrites($config);
 
-        $this->loadEnvOverwrites();
+        $this->stencil = new Stencil($this->templatesDir);
     }
 
-    public function loadEnvOverwrites()
+    /**
+     * @throws FileNotFoundException
+     */
+    public function loadEnvOverwrites(Config $config)
     {
         if (getenv('YAMLDOCS_IMAGES_SOURCE')) {
             $this->sourcePath = getenv('YAMLDOCS_IMAGES_SOURCE');
@@ -45,6 +48,10 @@ class ImageReferenceBuilder extends DefaultBuilder
 
         if (getenv('YAMLDOCS_OUTPUT')) {
             $this->outputPath = getenv('YAMLDOCS_OUTPUT');
+        }
+
+        if (getenv('YAMLDOCS_TEMPLATES')) {
+            $this->setTemplatesDir(getenv('YAMLDOCS_TEMPLATES'), $config);
         }
     }
 

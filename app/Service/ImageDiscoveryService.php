@@ -18,6 +18,11 @@ class ImageDiscoveryService implements ServiceInterface
     public static string $CHAINCTL_CACHE_IMAGES = "CHAINCTL_CACHE_IMAGES";
     public static string $CHAINCTL_CACHE_TAGS = "CHAINCTL_CACHE_TAGS";
 
+    public function boot(): void
+    {
+        //
+    }
+
     public function load(App $app): void
     {
         $this->cache = $app->cache;
