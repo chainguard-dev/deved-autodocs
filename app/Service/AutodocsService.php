@@ -18,8 +18,10 @@ class AutodocsService extends BuilderService
         /** @var ImageReferenceBuilder $imageBuilder */
         $imageBuilder = $this->getBuilder('images-reference');
 
-        foreach ($imageBuilder->builderOptions['pages'] as $page) {
-            $imageBuilder->registerPage(new $page);
+        foreach ($imageBuilder->builderOptions['pages'] as $pageClass) {
+            $page = new $pageClass;
+            $page->load($app);
+            $imageBuilder->registerPage($page);
         }
     }
 }

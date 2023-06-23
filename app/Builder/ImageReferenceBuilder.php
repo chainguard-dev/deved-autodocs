@@ -16,7 +16,7 @@ class ImageReferenceBuilder extends DefaultBuilder
     public string $changelogPath;
     public string $lastUpdatePath;
     public string $diffSourcePath;
-    protected Stencil $stencil;
+    public Stencil $stencil;
     public array $newImages = [];
 
     public function configure(Config $config, array $builderOptions = []): void
@@ -126,8 +126,8 @@ class ImageReferenceBuilder extends DefaultBuilder
     public function getProvenancePage(string $image): string
     {
         return $this->stencil->applyTemplate('image_provenance_page', [
-            'title' => $image,
-            'description' => "Provenance information for $image Chainguard Images"
+            'title' => basename($image),
+            'description' => "Provenance information for " . ucfirst(basename($image)) . " Chainguard Images"
         ]);
     }
 

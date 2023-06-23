@@ -8,6 +8,8 @@ if (php_sapi_name() !== 'cli') {
 require __DIR__ . '/vendor/autoload.php';
 
 use App\Service\AutodocsService;
+use App\Service\CacheService;
+use App\Service\ImageDiscoveryService;
 use Minicli\App;
 use Minicli\Exception\CommandNotFoundException;
 use Yamldocs\YamldocsConfig;
@@ -22,7 +24,8 @@ $app = new App(array_merge([
 ], $config->parameters));
 
 $app->addService('builder', new AutodocsService());
-
+$app->addService('imageDiscovery', new ImageDiscoveryService());
+$app->addService('cache', new CacheService());
 $app->setSignature('./autodocs help');
 
 $input = $argv;

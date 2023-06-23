@@ -6,6 +6,7 @@ use Minicli\Curly\Client;
 
 class TagsReader
 {
+    //chainctl img ls --group 720909c9f5279097d847ad02a2f24ba8f59de36a -ojson > image-list.json
     public static string $API = "https://storage.googleapis.com/chainguard-images-build-outputs/summary";
 
     /**
