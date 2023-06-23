@@ -14,7 +14,8 @@
     "minicli/command-help": "^1.0.0",
     "yamldocs/yamldocs": "^1.0.0",
     "minicli/curly": "^0.2.2",
-    "minicli/minicache": "^0.2.0"
+    "minicli/minicache": "^0.2.0",
+    "ext-mbstring": "*"
   },
   "require-dev": {
     "pestphp/pest": "^1.21"
