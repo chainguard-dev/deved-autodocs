@@ -65,25 +65,27 @@ class ImageTags implements ReferencePage
         $rows = [];
 
         foreach ($imageMeta as $tag) {
+            $now = new \DateTime();
+            $update = new \DateTime($tag['lastUpdated']);
+            $interval = $now->diff($update);
+
+            //suppress tags older than 1 month
+            if ($interval->m) {
+                 break;
+            }
+
             $rows[] = [
                 $this->code($tag['name']),
-                $this->getElapsedTime($tag['lastUpdated']),
-                $tag['digest']
+                $this->getElapsedTime($interval),
+                $this->code($tag['digest'])
             ];
         }
 
         return Mark::table($rows, ['Tag', 'Last Updated', 'Digest']);
     }
-
-    public function getElapsedTime(string $dateTime): string
+  
+    public function getElapsedTime(\DateInterval $interval): string
     {
-        $now = new \DateTime();
-        $update = new \DateTime($dateTime);
-        $interval = $now->diff($update);
-
-        if ($interval->m) {
-            return $update->format("F jS");
-        }
         if ($interval->d) {
             $x = $interval->d > 1 ? 's' : '';
             return "$interval->d day$x ago";
