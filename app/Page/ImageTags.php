@@ -83,7 +83,7 @@ class ImageTags implements ReferencePage
 
         return Mark::table($rows, ['Tag', 'Last Updated', 'Digest']);
     }
-
+  
     public function getElapsedTime(\DateInterval $interval): string
     {
         if ($interval->d) {
