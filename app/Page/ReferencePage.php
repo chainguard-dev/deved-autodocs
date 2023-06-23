@@ -2,11 +2,12 @@
 
 namespace App\Page;
 
+use App\Service\AutodocsService;
 use Minicli\App;
 
 interface ReferencePage
 {
-    public function load(App $app): void;
+    public function load(App $app, AutodocsService $autodocs): void;
 
     public function getContent(string $image): string;
 

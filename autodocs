@@ -7,26 +7,13 @@ if (php_sapi_name() !== 'cli') {
 
 require __DIR__ . '/vendor/autoload.php';
 
-use App\Service\AutodocsService;
-use App\Service\CacheService;
-use App\Service\ImageDiscoveryService;
 use Minicli\App;
 use Minicli\Exception\CommandNotFoundException;
 use Yamldocs\YamldocsConfig;
 
 $config = new YamldocsConfig();
 $config->load(__DIR__ . '/yamldocs.yaml');
-$app = new App(array_merge([
-    'app_path' => [
-        __DIR__ . '/app/Command',
-        '@minicli/command-help'
-    ]
-], $config->parameters));
-
-$app->addService('builder', new AutodocsService());
-$app->addService('imageDiscovery', new ImageDiscoveryService());
-$app->addService('cache', new CacheService());
-$app->setSignature('./autodocs help');
+$app = new App($config->parameters);
 
 $input = $argv;
 //check for workflow inputs

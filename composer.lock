@@ -137,16 +137,16 @@
         },
         {
             "name": "minicli/minicli",
-            "version": "4.0.3",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/minicli/minicli.git",
-                "reference": "7ccff45d4311e31a2fba896dfe70d4d2c6671aab"
+                "reference": "07718a97a32bdd5e104cd3e1dbb3eb10f620692b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minicli/minicli/zipball/7ccff45d4311e31a2fba896dfe70d4d2c6671aab",
-                "reference": "7ccff45d4311e31a2fba896dfe70d4d2c6671aab",
+                "url": "https://api.github.com/repos/minicli/minicli/zipball/07718a97a32bdd5e104cd3e1dbb3eb10f620692b",
+                "reference": "07718a97a32bdd5e104cd3e1dbb3eb10f620692b",
                 "shasum": ""
             },
             "require": {
@@ -161,6 +161,9 @@
             },
             "type": "library",
             "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
                 "psr-4": {
                     "Minicli\\": "src/"
                 }
@@ -177,7 +180,7 @@
             ],
             "support": {
                 "issues": "https://github.com/minicli/minicli/issues",
-                "source": "https://github.com/minicli/minicli/tree/4.0.3"
+                "source": "https://github.com/minicli/minicli/tree/4.1.0"
             },
             "funding": [
                 {
@@ -185,7 +188,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-05-20T22:04:58+00:00"
+            "time": "2023-06-13T09:00:02+00:00"
         },
         {
             "name": "minicli/stencil",
@@ -386,16 +389,16 @@
         },
         {
             "name": "yamldocs/yamldocs",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yamldocs/yamldocs.git",
-                "reference": "cdc8666aa3e90a9523d7bd52b82c65395e21cb1c"
+                "reference": "d9582f11b57e0eaca0cf8f27d5b98427632d7d23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yamldocs/yamldocs/zipball/cdc8666aa3e90a9523d7bd52b82c65395e21cb1c",
-                "reference": "cdc8666aa3e90a9523d7bd52b82c65395e21cb1c",
+                "url": "https://api.github.com/repos/yamldocs/yamldocs/zipball/d9582f11b57e0eaca0cf8f27d5b98427632d7d23",
+                "reference": "d9582f11b57e0eaca0cf8f27d5b98427632d7d23",
                 "shasum": ""
             },
             "require": {
@@ -430,9 +433,9 @@
             ],
             "support": {
                 "issues": "https://github.com/yamldocs/yamldocs/issues",
-                "source": "https://github.com/yamldocs/yamldocs/tree/1.0.0"
+                "source": "https://github.com/yamldocs/yamldocs/tree/1.0.2"
             },
-            "time": "2023-06-06T17:18:34+00:00"
+            "time": "2023-06-23T15:53:56+00:00"
         }
     ],
     "packages-dev": [
@@ -1376,16 +1379,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.8",
+            "version": "9.6.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "17d621b3aff84d0c8b62539e269e87d8d5baa76e"
+                "reference": "a9aceaf20a682aeacf28d582654a1670d8826778"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/17d621b3aff84d0c8b62539e269e87d8d5baa76e",
-                "reference": "17d621b3aff84d0c8b62539e269e87d8d5baa76e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a9aceaf20a682aeacf28d582654a1670d8826778",
+                "reference": "a9aceaf20a682aeacf28d582654a1670d8826778",
                 "shasum": ""
             },
             "require": {
@@ -1459,7 +1462,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.8"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.9"
             },
             "funding": [
                 {
@@ -1475,7 +1478,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-11T05:14:45+00:00"
+            "time": "2023-06-11T06:13:56+00:00"
         },
         {
             "name": "psr/container",

@@ -11,9 +11,21 @@ class CacheService implements ServiceInterface
     public array $cacheCollection;
     public string $cacheDir;
 
+    public function boot(): void
+    {
+        //
+    }
+
     public function load(App $app): void
     {
         $this->cacheDir = $app->config->cacheDir ?? __DIR__ . '/../../workdir/cache';
+        $this->loadOverwrites();
+    }
+
+    public function loadOverwrites(): void {
+        if (getenv('YAMLDOCS_CACHE')) {
+            $this->cacheDir = getenv('YAMLDOCS_CACHE');
+        }
     }
 
     public function createCache(string $identifier): void

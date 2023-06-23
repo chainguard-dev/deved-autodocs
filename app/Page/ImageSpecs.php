@@ -2,6 +2,7 @@
 
 namespace App\Page;
 
+use App\Service\AutodocsService;
 use App\Service\ImageDiscoveryService;
 use Minicli\App;
 use Minicli\Stencil;
@@ -13,7 +14,7 @@ class ImageSpecs implements ReferencePage
     public ImageDiscoveryService $imageDiscovery;
     public Stencil $stencil;
 
-    public function load(App $app): void
+    public function load(App $app, AutodocsService $autodocs): void
     {
         $this->imageDiscovery = $app->imageDiscovery;
         $this->stencil = new Stencil($app->config->templatesDir);

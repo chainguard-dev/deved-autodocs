@@ -2,6 +2,8 @@
 
 namespace App\Page;
 
+use App\Builder\ImageReferenceBuilder;
+use App\Service\AutodocsService;
 use App\Service\ImageDiscoveryService;
 use Minicli\App;
 use Minicli\Stencil;
@@ -10,15 +12,15 @@ use Yamldocs\Mark;
 class ImageTags implements ReferencePage
 {
     public ImageDiscoveryService $imageDiscovery;
-    public Stencil $stencil;
+    public AutodocsService $autodocs;
 
     /**
      * @throws \Exception
      */
-    public function load(App $app): void
+    public function load(App $app, AutodocsService $autodocs): void
     {
         $this->imageDiscovery = $app->imageDiscovery;
-        $this->stencil = new Stencil($app->config->templatesDir);
+        $this->autodocs = $autodocs;
     }
 
     public function code($str): string
@@ -33,7 +35,10 @@ class ImageTags implements ReferencePage
      */
     public function getContent(string $image): string
     {
-        return $this->stencil->applyTemplate('image_tags_page', [
+        $imageBuilder = $this->autodocs->getBuilder('images-reference');
+        $stencil = new Stencil($imageBuilder->templatesDir);
+
+        return $stencil->applyTemplate('image_tags_page', [
             'title' => ucfirst(basename($image)) . ' Image Tags History',
             'description' => "Image Tags and History for the " . ucfirst(basename($image)) . " Chainguard Image",
             'content' => $this->getTagsTable($image),
@@ -71,7 +76,7 @@ class ImageTags implements ReferencePage
 
             //suppress tags older than 1 month
             if ($interval->m) {
-                 break;
+                 continue;
             }
 
             $rows[] = [
