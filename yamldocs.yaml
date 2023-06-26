@@ -1,7 +1,4 @@
 builders:
-  - name: default
-    class: Yamldocs\Builder\DefaultBuilder
-
   - name: melange-pipelines
     class: App\Builder\Melange\PipelineReference
     source: workdir/yaml/pipelines
