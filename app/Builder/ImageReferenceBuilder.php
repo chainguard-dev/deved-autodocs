@@ -21,38 +21,16 @@ class ImageReferenceBuilder extends DefaultBuilder
 
     public function configure(Config $config, array $builderOptions = []): void
     {
-        parent::configure($config, $builderOptions);
+        $this->builderOptions = $builderOptions;
 
-        $this->sourcePath =  $this->builderOptions['source'];
-        $this->outputPath = $this->builderOptions['output'];
-        $this->diffSourcePath = $this->builderOptions['diffSource'] ?? $this->outputPath;
+        $this->sourcePath =  envconfig('YAMLDOCS_IMAGES_SOURCE', $this->builderOptions['source']);
+        $this->outputPath = envconfig('YAMLDOCS_OUTPUT', $this->builderOptions['output']);
+        $this->diffSourcePath = envconfig('YAMLDOCS_DIFF_SOURCE', $this->builderOptions['diffSource'] ?? $this->outputPath);
         $this->changelogPath = $this->builderOptions['changelog'];
         $this->lastUpdatePath = $this->builderOptions['lastUpdate'];
-        $this->loadEnvOverwrites($config);
-
+        $templatesDir = envconfig('YAMLDOCS_TEMPLATES', $this->builderOptions['templatesDir'] ?? $config->templatesDir);
+        $this->setTemplatesDir($templatesDir, $config);
         $this->stencil = new Stencil($this->templatesDir);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    public function loadEnvOverwrites(Config $config)
-    {
-        if (getenv('YAMLDOCS_IMAGES_SOURCE')) {
-            $this->sourcePath = getenv('YAMLDOCS_IMAGES_SOURCE');
-        }
-
-        if (getenv('YAMLDOCS_DIFF_SOURCE')) {
-            $this->diffSourcePath = getenv('YAMLDOCS_DIFF_SOURCE');
-        }
-
-        if (getenv('YAMLDOCS_OUTPUT')) {
-            $this->outputPath = getenv('YAMLDOCS_OUTPUT');
-        }
-
-        if (getenv('YAMLDOCS_TEMPLATES')) {
-            $this->setTemplatesDir(getenv('YAMLDOCS_TEMPLATES'), $config);
-        }
     }
 
     /**

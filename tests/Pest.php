@@ -47,5 +47,6 @@ function getApp(): App
 {
     $config = new YamldocsConfig();
     $config->load(__DIR__ . '/../yamldocs.yaml');
-    return new App($config->parameters);
+    $appConfig = include __DIR__ . '/../config/app.php';
+    return new App(array_merge($appConfig, $config->parameters));
 }
