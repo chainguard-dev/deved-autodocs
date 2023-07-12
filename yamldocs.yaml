@@ -12,7 +12,6 @@ builders:
     lastUpdate: workdir/markdown/images/reference/last-update.md
     pages:
       - App\Page\ImageOverview
-      - App\Page\ImageSpecs
       - App\Page\ImageTags
 
 templatesDir: templates

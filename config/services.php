@@ -8,8 +8,6 @@ use App\Service\ImageDiscoveryService;
 
 return [
     'services' => [
-        'cache' => CacheService::class,
-        'imageDiscovery' => ImageDiscoveryService::class,
-        'builder' => AutodocsService::class
+        'autodocs' => AutodocsService::class
     ],
 ];

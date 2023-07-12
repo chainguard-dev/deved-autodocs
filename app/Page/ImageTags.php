@@ -2,16 +2,13 @@
 
 namespace App\Page;
 
-use App\Builder\ImageReferenceBuilder;
 use App\Service\AutodocsService;
-use App\Service\ImageDiscoveryService;
 use Minicli\App;
 use Minicli\Stencil;
 use Yamldocs\Mark;
 
 class ImageTags implements ReferencePage
 {
-    public ImageDiscoveryService $imageDiscovery;
     public AutodocsService $autodocs;
 
     /**
@@ -19,7 +16,6 @@ class ImageTags implements ReferencePage
      */
     public function load(App $app, AutodocsService $autodocs): void
     {
-        $this->imageDiscovery = $app->imageDiscovery;
         $this->autodocs = $autodocs;
     }
 
@@ -39,8 +35,8 @@ class ImageTags implements ReferencePage
         $stencil = new Stencil($imageBuilder->templatesDir);
 
         return $stencil->applyTemplate('image_tags_page', [
-            'title' => ucfirst(basename($image)) . ' Image Tags History',
-            'description' => "Image Tags and History for the " . ucfirst(basename($image)) . " Chainguard Image",
+            'title' => ucfirst($image) . ' Image Tags History',
+            'description' => "Image Tags and History for the " . ucfirst($image) . " Chainguard Image",
             'content' => $this->getTagsTable($image),
         ]);
     }
@@ -57,19 +53,19 @@ class ImageTags implements ReferencePage
         return ($date1 < $date2) ? -1 : 1;
     }
 
-    public function getTagsTable(string $image): string
+    public function getTagsTable(string $image, array $onlyTags = []): string
     {
         try {
-            $imageMeta = $this->imageDiscovery->getImageTagsInfo(basename($image));
+            $imageTags = $this->autodocs->getImageTags($image);
         } catch (\Exception $e) {
             return "";
         }
 
-        usort($imageMeta, [ImageTags::class, "orderTags"]);
-        $imageMeta = array_reverse($imageMeta);
+        usort($imageTags, [ImageTags::class, "orderTags"]);
+        $imageTags = array_reverse($imageTags);
         $rows = [];
 
-        foreach ($imageMeta as $tag) {
+        foreach ($imageTags as $tag) {
             $now = new \DateTime();
             $update = new \DateTime($tag['lastUpdated']);
             $interval = $now->diff($update);
@@ -77,6 +73,11 @@ class ImageTags implements ReferencePage
             //suppress tags older than 1 month
             if ($interval->m) {
                  continue;
+            }
+
+            //skip other tags when a set is provided
+            if (count($onlyTags) AND !in_array($tag['name'], $onlyTags)) {
+                continue;
             }
 
             $rows[] = [
