@@ -24,7 +24,7 @@ class AutodocsService extends BuilderService
     {
         parent::load($app);
 
-        $this->cacheDir = $app->config->cacheDir;
+        $this->cacheDir = envconfig('YAMLDOCS_CACHE', $app->config->cacheDir);
 
         /** @var ImageReferenceBuilder $imageBuilder */
         $imageBuilder = $this->getBuilder('images-reference');
