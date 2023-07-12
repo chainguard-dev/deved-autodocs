@@ -9,7 +9,6 @@ use Minicli\App;
 use Minicli\FileNotFoundException;
 use Yamldocs\BuilderService;
 
-
 class AutodocsService extends BuilderService
 {
     public string $cacheDir;
@@ -85,7 +84,7 @@ class AutodocsService extends BuilderService
         try {
             $feed->loadFile($this->cacheDir . "/" . $feedName . '.json');
         } catch (FileNotFoundException $e) {
-            throw new Exception("You must pull the data feeds before running autodocs.");
+            throw new Exception("File not found: " . $this->cacheDir . "/" . $feedName . '.json');
         }
 
         return $feed;

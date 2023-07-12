@@ -47,6 +47,7 @@ function getApp(): App
 {
     $config = new YamldocsConfig();
     $config->load(__DIR__ . '/../yamldocs.yaml');
-    $appConfig = include __DIR__ . '/../config/app.php';
-    return new App(array_merge($appConfig, $config->parameters));
+    $appConfig = array_merge(include __DIR__ . '/../config/app.php', $config->parameters);
+    $appConfig['cacheDir'] = __DIR__ . '/resources';
+    return new App($appConfig);
 }
