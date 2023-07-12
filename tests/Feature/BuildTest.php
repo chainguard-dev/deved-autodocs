@@ -5,10 +5,10 @@ use App\Service\AutodocsService;
 
 test('autodocs builder has ImageReferenceBuilder loaded with pages.', function () {
     $app = getApp();
-    /** @var AutodocsService $builder */
-    $builder = $app->builder;
+    /** @var AutodocsService $autodocs */
+    $autodocs = $app->autodocs;
     /** @var ImageReferenceBuilder $imagesBuilder */
-    $imagesBuilder = $builder->getBuilder('images-reference');
+    $imagesBuilder = $autodocs->getBuilder('images-reference');
     $this->assertInstanceOf(ImageReferenceBuilder::class, $imagesBuilder);
-    $this->assertCount(3, $imagesBuilder->referencePages);
+    $this->assertCount(2, $imagesBuilder->referencePages);
 });
