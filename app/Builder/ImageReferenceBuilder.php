@@ -33,22 +33,6 @@ class ImageReferenceBuilder extends DefaultBuilder
         $this->stencil = new Stencil($this->templatesDir);
     }
 
-    /**
-     * @throws FileNotFoundException
-     */
-    public function buildImageDocs(): void
-    {
-        $this->savePage($this->outputPath . '/_index.md', $this->getIndexPage(
-            "Chainguard Images Reference",
-            "Chainguard Images Reference Docs",
-            "Reference docs for Chainguard Images"
-        ));
-
-        foreach (glob($this->sourcePath . '/*') as $image) {
-            $this->buildDocsForImage($image);
-        }
-    }
-
     public function saveChangelog(): void
     {
         $changelog = $this->getChangelog();
@@ -61,20 +45,19 @@ class ImageReferenceBuilder extends DefaultBuilder
      */
     public function buildDocsForImage(string $image): void
     {
-        if (!is_dir($this->diffSourcePath . '/' . basename($image))) {
-            $this->newImages[] = basename($image);
+        if (!is_dir($this->diffSourcePath . '/' . $image)) {
+            $this->newImages[] = $image;
         }
 
-        $savePath = $this->outputPath . '/' . basename($image);
+        $savePath = $this->outputPath . '/' . $image;
         if (!is_dir($savePath)) {
             mkdir($savePath, 0777, true);
         }
 
-        $imageName = basename($image);
-        $this->savePage($this->outputPath . '/_index.md', $this->getIndexPage(
-            $imageName,
-            "Chainguard Images Reference: $imageName",
-            "Reference docs for the $imageName Chainguard Image"
+        $this->savePage($this->outputPath . '/' . $image . '/_index.md', $this->getIndexPage(
+            $image,
+            "Chainguard Images Reference: $image",
+            "Reference docs for the $image Chainguard Image"
         ));
 
         foreach ($this->referencePages as $referencePage)
@@ -99,9 +82,9 @@ class ImageReferenceBuilder extends DefaultBuilder
     public function getIndexPage(string $title, string $description, string $content): string
     {
         return $this->stencil->applyTemplate('_index_page', [
-            'title' => "Chainguard Images Reference",
-            'description' => "Chainguard Images Reference Docs",
-            'content' => "Reference docs for Chainguard Images"
+            'title' => $title,
+            'description' => $description,
+            'content' => $content
         ]);
     }
 

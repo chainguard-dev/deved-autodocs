@@ -2,16 +2,18 @@
 
 namespace App\Page;
 
+use App\Builder\ImageReferenceBuilder;
 use App\Service\AutodocsService;
-use App\Service\ImageDiscoveryService;
 use Minicli\App;
+use Minicli\FileNotFoundException;
 use Minicli\Stencil;
 use App\ReadmeReader;
 
 class ImageOverview implements ReferencePage
 {
-    public ImageDiscoveryService $imageDiscovery;
     public Stencil $stencil;
+    public ImageTags $imageTags;
+    public string $sourcePath;
 
     public static string $DEFAULT_REGISTRY='cgr.dev/chainguard';
 
@@ -20,8 +22,12 @@ class ImageOverview implements ReferencePage
      */
     public function load(App $app, AutodocsService $autodocs): void
     {
-        $this->imageDiscovery = $app->imageDiscovery;
-        $this->stencil = new Stencil($app->config->templatesDir);
+        /** @var ImageReferenceBuilder $imagesBuilder */
+        $imagesBuilder = $autodocs->getBuilder('images-reference');
+        $this->stencil = new Stencil($imagesBuilder->templatesDir);
+        $this->sourcePath = $imagesBuilder->sourcePath;
+        $this->imageTags = new ImageTags();
+        $this->imageTags->load($app, $autodocs);
     }
 
     public function code($str): string
@@ -36,14 +42,22 @@ class ImageOverview implements ReferencePage
      */
     public function getContent(string $image): string
     {
-        $readme = ReadmeReader::getContent($image . '/README.md');
-        $reference = '[' . self::$DEFAULT_REGISTRY . '/' . basename($image) . ']' . '(https://github.com/chainguard-images/images/tree/main/images/' . basename($image) . ')';
+        try {
+            $readme = ReadmeReader::getContent($this->sourcePath . '/' . $image . '/README.md');
+        } catch (FileNotFoundException $exception) {
+            $readme = $this->stencil->applyTemplate('default_overview', [
+                'title' => $image
+            ]);
+        }
 
-        $content = $reference . "\n" . $readme;
+        $reference = '[' . self::$DEFAULT_REGISTRY . '/' . $image . ']' . '(https://github.com/chainguard-images/images/tree/main/images/' . $image . ')';
+        $table = $this->imageTags->getTagsTable($image, ['latest', 'latest-dev']);
+
+        $content = $reference . "\n\n" . $table. "\n" . $readme;
 
         return $this->stencil->applyTemplate('image_reference_page', [
-            'title' => "Image Overview: " . ucfirst(basename($image)),
-            'description' => "Overview: " . ucfirst(basename($image)) . " Chainguard Image",
+            'title' => "Image Overview: " . ucfirst($image),
+            'description' => "Overview: " . ucfirst($image) . " Chainguard Image",
             'content' => $content,
         ]);
     }
