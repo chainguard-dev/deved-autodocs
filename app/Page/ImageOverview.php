@@ -2,37 +2,25 @@
 
 namespace App\Page;
 
-use App\Builder\ImageReferenceBuilder;
 use App\Service\AutodocsService;
 use Minicli\App;
 use Minicli\FileNotFoundException;
-use Minicli\Stencil;
 use App\ReadmeReader;
 
-class ImageOverview implements ReferencePage
+class ImageOverview extends ImageReferencePage
 {
-    public Stencil $stencil;
     public ImageTags $imageTags;
     public string $sourcePath;
 
     public static string $DEFAULT_REGISTRY='cgr.dev/chainguard';
 
-    /**
-     * @throws \Exception
-     */
     public function load(App $app, AutodocsService $autodocs): void
     {
-        /** @var ImageReferenceBuilder $imagesBuilder */
-        $imagesBuilder = $autodocs->getBuilder('images-reference');
-        $this->stencil = new Stencil($imagesBuilder->templatesDir);
-        $this->sourcePath = $imagesBuilder->sourcePath;
+        parent::load($app, $autodocs);
+
+        $this->sourcePath = $this->imagesBuilder->sourcePath;
         $this->imageTags = new ImageTags();
         $this->imageTags->load($app, $autodocs);
-    }
-
-    public function code($str): string
-    {
-        return sprintf("`%s`", $str);
     }
 
     /**

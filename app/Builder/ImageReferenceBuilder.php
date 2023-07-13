@@ -31,6 +31,7 @@ class ImageReferenceBuilder extends DefaultBuilder
         $templatesDir = envconfig('YAMLDOCS_TEMPLATES', $this->builderOptions['templatesDir'] ?? $config->templatesDir);
         $this->setTemplatesDir($templatesDir, $config);
         $this->stencil = new Stencil($this->templatesDir);
+        $this->stencil->fallbackTo([$config->templatesDir]);
     }
 
     public function saveChangelog(): void
