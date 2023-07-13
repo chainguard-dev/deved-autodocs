@@ -2,28 +2,11 @@
 
 namespace App\Page;
 
-use App\Service\AutodocsService;
-use Minicli\App;
 use Minicli\Stencil;
 use Yamldocs\Mark;
 
-class ImageTags implements ReferencePage
+class ImageTags extends ImageReferencePage
 {
-    public AutodocsService $autodocs;
-
-    /**
-     * @throws \Exception
-     */
-    public function load(App $app, AutodocsService $autodocs): void
-    {
-        $this->autodocs = $autodocs;
-    }
-
-    public function code($str): string
-    {
-        return sprintf("`%s`", $str);
-    }
-
     /**
      * @param string $image
      * @return string
@@ -31,10 +14,7 @@ class ImageTags implements ReferencePage
      */
     public function getContent(string $image): string
     {
-        $imageBuilder = $this->autodocs->getBuilder('images-reference');
-        $stencil = new Stencil($imageBuilder->templatesDir);
-
-        return $stencil->applyTemplate('image_tags_page', [
+        return $this->stencil->applyTemplate('image_tags_page', [
             'title' => ucfirst($image) . ' Image Tags History',
             'description' => "Image Tags and History for the " . ucfirst($image) . " Chainguard Image",
             'content' => $this->getTagsTable($image),
