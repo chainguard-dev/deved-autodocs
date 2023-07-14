@@ -44,8 +44,8 @@ class ImageOverview extends ImageReferencePage
         $content = $reference . "\n\n" . $table. "\n" . $readme;
 
         return $this->stencil->applyTemplate('image_reference_page', [
-            'title' => "Image Overview: " . ucfirst($image),
-            'description' => "Overview: " . ucfirst($image) . " Chainguard Image",
+            'title' => "Image Overview: $image",
+            'description' => "Overview: $image Chainguard Image",
             'content' => $content,
         ]);
     }

@@ -31,7 +31,7 @@ class ImageReferenceBuilder extends DefaultBuilder
         $templatesDir = envconfig('YAMLDOCS_TEMPLATES', $this->builderOptions['templatesDir'] ?? $config->templatesDir);
         $this->setTemplatesDir($templatesDir, $config);
         $this->stencil = new Stencil($this->templatesDir);
-        $this->stencil->fallbackTo([$config->templatesDir]);
+        $this->stencil->fallbackTo([$config->templatesDir, __DIR__ . '/../../templates']);
     }
 
     public function saveChangelog(): void
@@ -96,7 +96,7 @@ class ImageReferenceBuilder extends DefaultBuilder
     {
         return $this->stencil->applyTemplate('image_provenance_page', [
             'title' => basename($image),
-            'description' => "Provenance information for " . ucfirst(basename($image)) . " Chainguard Images"
+            'description' => "Provenance information for $image Chainguard Image"
         ]);
     }
 
