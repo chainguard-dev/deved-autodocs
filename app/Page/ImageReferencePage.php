@@ -21,7 +21,7 @@ abstract class ImageReferencePage implements ReferencePage
         $this->autodocs = $autodocs;
         $this->imagesBuilder = $this->autodocs->getBuilder('images-reference');
         $this->stencil = new Stencil($this->imagesBuilder->templatesDir);
-        $this->stencil->fallbackTo([$app->config->templatesDir]);
+        $this->stencil->fallbackTo([$app->config->templatesDir, __DIR__ . '/../../templates']);
     }
 
     public function code($str): string

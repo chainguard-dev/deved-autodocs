@@ -15,8 +15,8 @@ class ImageTags extends ImageReferencePage
     public function getContent(string $image): string
     {
         return $this->stencil->applyTemplate('image_tags_page', [
-            'title' => ucfirst($image) . ' Image Tags History',
-            'description' => "Image Tags and History for the " . ucfirst($image) . " Chainguard Image",
+            'title' =>"$image Image Tags History",
+            'description' => "Image Tags and History for the $image Chainguard Image",
             'content' => $this->getTagsTable($image),
         ]);
     }
@@ -33,7 +33,7 @@ class ImageTags extends ImageReferencePage
         return ($date1 < $date2) ? -1 : 1;
     }
 
-    public function getTagsTable(string $image, array $onlyTags = []): string
+    public function getTagsTable(string $image, array $onlyTags = [], $relativeTime = false): string
     {
         try {
             $imageTags = $this->autodocs->getImageTags($image);
@@ -62,7 +62,7 @@ class ImageTags extends ImageReferencePage
 
             $rows[] = [
                 $this->code($tag['name']),
-                $this->getElapsedTime($interval),
+                $relativeTime ? $this->getElapsedTime($interval) : $update->format('F jS'),
                 $this->code($tag['digest'])
             ];
         }
