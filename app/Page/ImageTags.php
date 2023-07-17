@@ -67,7 +67,7 @@ class ImageTags extends ImageReferencePage
             ];
         }
 
-        return Mark::table($rows, ['Tag', 'Last Updated', 'Digest']);
+        return Mark::table($rows, ['Tag', 'Last Changed', 'Digest']);
     }
   
     public function getElapsedTime(\DateInterval $interval): string
