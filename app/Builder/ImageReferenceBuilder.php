@@ -26,8 +26,8 @@ class ImageReferenceBuilder extends DefaultBuilder
         $this->sourcePath =  envconfig('YAMLDOCS_IMAGES_SOURCE', $this->builderOptions['source']);
         $this->outputPath = envconfig('YAMLDOCS_OUTPUT', $this->builderOptions['output']);
         $this->diffSourcePath = envconfig('YAMLDOCS_DIFF_SOURCE', $this->builderOptions['diffSource'] ?? $this->outputPath);
-        $this->changelogPath = $this->builderOptions['changelog'];
-        $this->lastUpdatePath = $this->builderOptions['lastUpdate'];
+        $this->changelogPath = envconfig('YAMLDOCS_CHANGELOG', $this->builderOptions['changelog']);
+        $this->lastUpdatePath = envconfig('YAMLDOCS_LASTUPDATE', $this->builderOptions['lastUpdate']);
         $templatesDir = envconfig('YAMLDOCS_TEMPLATES', $this->builderOptions['templatesDir'] ?? $config->templatesDir);
         $this->setTemplatesDir($templatesDir, $config);
         $this->stencil = new Stencil($this->templatesDir);
