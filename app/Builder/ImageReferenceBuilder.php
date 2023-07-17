@@ -37,8 +37,21 @@ class ImageReferenceBuilder extends DefaultBuilder
     public function saveChangelog(): void
     {
         $changelog = $this->getChangelog();
-        $this->savePage($this->lastUpdatePath, $changelog);
-        $this->appendToFile($this->changelogPath, $changelog);
+        try {
+            if (!is_file($this->lastUpdatePath)) {
+                if (touch($this->lastUpdatePath)) {
+                    $this->savePage($this->lastUpdatePath, $changelog);
+                }
+            }
+
+            if (!is_file($this->changelogPath)) {
+                if (touch($this->changelogPath)) {
+                    $this->appendToFile($this->changelogPath, $changelog);
+                }
+            }
+        } catch (\Exception $exception) {
+            return;
+        }
     }
 
     /**
