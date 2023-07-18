@@ -72,12 +72,14 @@ class ImageTags extends ImageReferencePage
                 }
                 $tagsList .= ' ' . $this->code($tag['name']);
             }
-
-            $rows[] = [
-                $tagsList,
-                $relativeTime ? $this->getElapsedTime($interval) : $update->format('F jS'),
-                $this->code($digest)
-            ];
+            
+            if ($tagsList != "") {
+                $rows[] = [
+                    $tagsList,
+                    $relativeTime ? $this->getElapsedTime($interval) : $update->format('F jS'),
+                    $this->code($digest)
+                ];
+            }
         }
 
         return Mark::table($rows, ['Tag (s)', 'Last Changed', 'Digest']);
