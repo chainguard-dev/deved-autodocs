@@ -31,6 +31,6 @@ class SlackController extends CommandController
             throw new \Exception("There was an error with the request.");
         }
 
-        $this->getPrinter()->success("Message sent.");
+        $this->success("Message sent.");
     }
 }
