@@ -2,7 +2,6 @@
 
 namespace App\Page;
 
-use Minicli\Stencil;
 use Yamldocs\Mark;
 
 class ImageTags extends ImageReferencePage
@@ -43,11 +42,21 @@ class ImageTags extends ImageReferencePage
 
         usort($imageTags, [ImageTags::class, "orderTags"]);
         $imageTags = array_reverse($imageTags);
-        $rows = [];
 
-        foreach ($imageTags as $tag) {
+        //group by digest
+        $groupedTags = [];
+        foreach ($imageTags as $imageTag) {
+            $groupedTags[$imageTag['digest']][] = [
+                'lastUpdated' => $imageTag['lastUpdated'],
+                'name' => $imageTag['name']
+            ];
+        }
+
+        //prepare table
+        $rows = [];
+        foreach ($groupedTags as $digest => $tags) {
             $now = new \DateTime();
-            $update = new \DateTime($tag['lastUpdated']);
+            $update = new \DateTime($tags[0]['lastUpdated']);
             $interval = $now->diff($update);
 
             //suppress tags older than 1 month
@@ -55,19 +64,23 @@ class ImageTags extends ImageReferencePage
                  continue;
             }
 
-            //skip other tags when a set is provided
-            if (count($onlyTags) AND !in_array($tag['name'], $onlyTags)) {
-                continue;
+            $tagsList = "";
+            foreach ($tags as $tag) {
+                //skip other tags when a set is provided
+                if (count($onlyTags) AND !in_array($tag['name'], $onlyTags)) {
+                    continue;
+                }
+                $tagsList .= ' ' . $this->code($tag['name']);
             }
 
             $rows[] = [
-                $this->code($tag['name']),
+                $tagsList,
                 $relativeTime ? $this->getElapsedTime($interval) : $update->format('F jS'),
-                $this->code($tag['digest'])
+                $this->code($digest)
             ];
         }
 
-        return Mark::table($rows, ['Tag', 'Last Changed', 'Digest']);
+        return Mark::table($rows, ['Tag (s)', 'Last Changed', 'Digest']);
     }
   
     public function getElapsedTime(\DateInterval $interval): string
