@@ -18,7 +18,7 @@ class ImagesController extends CommandController
         /** @var AutodocsService $autodocs */
         $autodocs = $this->getApp()->autodocs;
         $imagesList = $autodocs->getImagesList();
-        $ignoreImages = ['alpine-base', 'k3s-images', 'sdk', 'spire'];
+        $ignoreImages = ['alpine-base', 'k3s-images', 'sdk', 'spire', 'musl-dynamic'];
 
         $imagesBuilder = $autodocs->getBuilder('images-reference');
         $this->out("Using $imagesBuilder->diffSourcePath as Diff Source.\n");
