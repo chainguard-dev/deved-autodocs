@@ -10,7 +10,7 @@ class DataFeed
 
     public string $data;
 
-    public array $json;
+    public array $json = [];
 
     public function __construct(string $identifier)
     {
@@ -24,7 +24,9 @@ class DataFeed
         }
 
         $this->data = file_get_contents($file);
-        $this->json = json_decode($this->data, true);
+        if ($this->data) {
+            $this->json = json_decode($this->data, true);
+        }
     }
 
     public function load(string $data): void

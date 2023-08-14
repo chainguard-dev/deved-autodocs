@@ -1,5 +1,5 @@
 ---
-title: "{{ title }} Image Variants"
+title: "{{ title }} Public Image Variants"
 type: "article"
 description: "{{ description }}"
 date: 2023-03-07T11:07:52+02:00
@@ -14,6 +14,6 @@ weight: 550
 toc: true
 ---
 
-This page shows detailed information about all available variants of the Chainguard **{{ title }}** Image.
+This page shows detailed information about all public variants of the Chainguard **{{ title }}** Image.
 
 {{ content }}
