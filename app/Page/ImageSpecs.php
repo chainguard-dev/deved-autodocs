@@ -173,6 +173,11 @@ class ImageSpecs extends ImageReferencePage
         return $content;
     }
 
+    public function getName(): string
+    {
+        return 'variants';
+    }
+
     public function getSaveName(string $image): string
     {
         return 'image_specs.md';

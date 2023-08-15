@@ -50,6 +50,11 @@ class ImageOverview extends ImageReferencePage
         ]);
     }
 
+    public function getName(): string
+    {
+        return 'overview';
+    }
+
     public function getSaveName(string $image): string
     {
         return 'overview.md';

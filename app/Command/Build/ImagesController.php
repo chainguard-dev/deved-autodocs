@@ -41,7 +41,7 @@ class ImagesController extends CommandController
             }
             $imageName = $image['repo']['name'];
             $this->info("Building docs for the $imageName image...");
-            $imagesBuilder->buildDocsForImage($imageName);
+            $imagesBuilder->buildDocsForImage($imageName, $this->getParam("page"));
         }
 
         $imagesBuilder->saveChangelog();

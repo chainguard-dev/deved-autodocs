@@ -96,6 +96,11 @@ class ImageTags extends ImageReferencePage
         return "$interval->h hour$x ago";
     }
 
+    public function getName(): string
+    {
+        return 'tags';
+    }
+
     public function getSaveName(string $image): string
     {
         return 'tags_history.md';
