@@ -13,6 +13,7 @@ builders:
     pages:
       - App\Page\ImageOverview
       - App\Page\ImageTags
+      - App\Page\ImageProvenance
 
 templatesDir: templates
 cacheDir: workdir/cache

@@ -1,5 +1,5 @@
 ---
-title: "{{ title }} Public Image Variants"
+title: "{{ title }} Image Variants"
 type: "article"
 description: "{{ description }}"
 date: 2023-03-07T11:07:52+02:00

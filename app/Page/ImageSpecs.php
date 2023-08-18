@@ -47,8 +47,8 @@ class ImageSpecs extends ImageReferencePage
         $content .= "\n" . $this->getDependenciesSection($packages, $headers);
 
         return $this->stencil->applyTemplate('image_specs_page', [
-            'title' => ucfirst(basename($image)),
-            'description' => "Detailed information about the public " . ucfirst($image) . " Chainguard Image variants",
+            'title' => $image,
+            'description' => "Detailed information about the public $image Chainguard Image variants",
             'content' => $content,
         ]);
     }
@@ -56,7 +56,7 @@ class ImageSpecs extends ImageReferencePage
     public function getEntrypoint(array $yamlConfig): string
     {
         $entrypoint = "not specified";
-        if (isset($yamlConfig['entrypoint']['command'])) {
+        if ($yamlConfig['entrypoint']['command']) {
             $entrypoint = '`' . $yamlConfig['entrypoint']['command'] . '`';
         }
 
