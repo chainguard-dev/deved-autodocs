@@ -18,7 +18,7 @@ class ImagesController extends CommandController
         /** @var AutodocsService $autodocs */
         $autodocs = $this->getApp()->autodocs;
         $imagesList = $autodocs->getImagesList();
-        $ignoreImages = ['alpine-base', 'k3s-images', 'sdk', 'spire', 'musl-dynamic'];
+        $ignoreImages = ['alpine-base', 'k3s-images', 'sdk', 'spire', 'musl-dynamic', 'nri-kube-events', 'nri-kubernetes', 'nri-prometheus'];
 
         $imagesBuilder = $autodocs->getBuilder('images-reference');
         $this->out("Using $imagesBuilder->diffSourcePath as Diff Source.\n");
@@ -41,7 +41,7 @@ class ImagesController extends CommandController
             }
             $imageName = $image['repo']['name'];
             $this->info("Building docs for the $imageName image...");
-            $imagesBuilder->buildDocsForImage($imageName);
+            $imagesBuilder->buildDocsForImage($imageName, $this->getParam("page"));
         }
 
         $imagesBuilder->saveChangelog();

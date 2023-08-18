@@ -57,7 +57,7 @@ class ImageReferenceBuilder extends DefaultBuilder
     /**
      * @throws FileNotFoundException
      */
-    public function buildDocsForImage(string $image): void
+    public function buildDocsForImage(string $image, string $page = "all"): void
     {
         if (!is_dir($this->diffSourcePath . '/' . $image)) {
             $this->newImages[] = $image;
@@ -76,13 +76,13 @@ class ImageReferenceBuilder extends DefaultBuilder
 
         foreach ($this->referencePages as $referencePage)
         {
-            $this->savePage(
-                $savePath . '/' . $referencePage->getSaveName($image),
-                $referencePage->getContent($image)
-            );
+            if ($page === "all" || $page === $referencePage->getName()) {
+                $this->savePage(
+                    $savePath . '/' . $referencePage->getSaveName($image),
+                    $referencePage->getContent($image)
+                );
+            }
         }
-
-        $this->savePage($savePath . '/provenance_info.md', $this->getProvenancePage($image));
     }
 
     public function registerPage(ReferencePage $page): void
@@ -99,17 +99,6 @@ class ImageReferenceBuilder extends DefaultBuilder
             'title' => $title,
             'description' => $description,
             'content' => $content
-        ]);
-    }
-
-    /**
-     * @throws FileNotFoundException
-     */
-    public function getProvenancePage(string $image): string
-    {
-        return $this->stencil->applyTemplate('image_provenance_page', [
-            'title' => basename($image),
-            'description' => "Provenance information for $image Chainguard Image"
         ]);
     }
 

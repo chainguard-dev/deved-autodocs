@@ -15,7 +15,6 @@ class AutodocsService extends BuilderService
     public array $dataFeeds;
 
     public static string $CACHE_IMAGES = 'images-tags';
-    public static string $CACHE_IMAGE_PREFIX = 'image-';
 
     /**
      * @throws Exception
@@ -36,6 +35,41 @@ class AutodocsService extends BuilderService
         }
 
         $this->loadDataFeeds([self::$CACHE_IMAGES]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getImageVariants(string $imageName): array
+    {
+        $variants = [];
+        foreach (glob ($this->cacheDir . "/$imageName*.json") as $imageCache) {
+            $tagName = str_replace("$imageName-", '', basename($imageCache));
+            $tagName = str_replace(".json", '', $tagName);
+
+            try {
+                $imageVariant = $this->getImageSpecs($imageName, $tagName);
+            } catch (Exception $e) {
+                echo $e->getMessage();
+                continue;
+            }
+
+            if (count($imageVariant)) {
+                $variants[$tagName] = $imageVariant;
+            }
+        }
+
+        return $variants;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getImageSpecs(string $imageName, string $tagName): array
+    {
+        $imageSpecs = $this->getDataFeed($imageName . '-' . $tagName);
+
+        return $imageSpecs->json;
     }
 
     public function getImagesList(): array

@@ -2,24 +2,10 @@
 
 namespace App\Page;
 
-use App\Service\AutodocsService;
-use App\Service\ImageDiscoveryService;
-use Minicli\App;
-use Minicli\Stencil;
 use Yamldocs\Mark;
 
-class ImageSpecs implements ReferencePage
+class ImageSpecs extends ImageReferencePage
 {
-    public string $imageName;
-    public ImageDiscoveryService $imageDiscovery;
-    public Stencil $stencil;
-
-    public function load(App $app, AutodocsService $autodocs): void
-    {
-        $this->imageDiscovery = $app->imageDiscovery;
-        $this->stencil = new Stencil($app->config->templatesDir);
-    }
-
     /**
      * @throws \Exception
      */
@@ -36,34 +22,33 @@ class ImageSpecs implements ReferencePage
             'Has a shell?',
         ];
 
-        $this->imageName = basename($image);
-        $packages = $variants = [];
-        $variantsData = $this->imageDiscovery->getImageMetaData($image);
-
-        foreach ($variantsData as $variant => $config) {
-            $headers[] = $variants[] = $variant;
+        $variants = $this->autodocs->getImageVariants($image);
+        $packages = [];
+        foreach ($variants as $variant => $config) {
+            $headers[] = $variant;
             $columns[] = [
                 $this->getDefaultUser($config),
                 $this->getEntrypoint($config),
-                isset($config['cmd']) ? '`' . $config['cmd'] . '`' : "not specified",
-                isset($config['work-dir']) ? '`' . $config['work-dir'] . '`' : "not specified",
+                $config['cmd'] ? '`' . $config['cmd'] . '`' : "not specified",
+                $config['work-dir'] ? '`' . $config['work-dir'] . '`' : "not specified",
                 $this->hasApk($config),
                 $this->hasShell($config),
             ];
 
             //build packages array
-            foreach ($config['contents']['packages'] as $deps)
+            foreach ($config['contents']['packages'] as $dep)
             {
-                $packages[$deps][] = $variant;
+                $split = explode("=", $dep);
+                $packages[$split[0]][] = $variant;
             }
         }
 
-        $content .= $this->getVariantsSection($variants, $columns, $headers);
-        $content .= $this->getDependenciesSection($packages, $headers);
+        $content .= $this->getVariantsSection($image, $variants, $columns, $headers);
+        $content .= "\n" . $this->getDependenciesSection($packages, $headers);
 
         return $this->stencil->applyTemplate('image_specs_page', [
-            'title' => ucfirst(basename($image)),
-            'description' => "Detailed information about the " . ucfirst(basename($image)) . "Chainguard Image variants",
+            'title' => $image,
+            'description' => "Detailed information about the public $image Chainguard Image variants",
             'content' => $content,
         ]);
     }
@@ -71,7 +56,7 @@ class ImageSpecs implements ReferencePage
     public function getEntrypoint(array $yamlConfig): string
     {
         $entrypoint = "not specified";
-        if (isset($yamlConfig['entrypoint']['command'])) {
+        if ($yamlConfig['entrypoint']['command']) {
             $entrypoint = '`' . $yamlConfig['entrypoint']['command'] . '`';
         }
 
@@ -84,34 +69,28 @@ class ImageSpecs implements ReferencePage
 
     public function hasApk(array $yamlConfig): string
     {
-        return (
-            in_array('apk-tools', $yamlConfig['contents']['packages']) ||
-            in_array('wolfi-base', $yamlConfig['contents']['packages'])) ?
-            "yes" : "no";
+        return $this->hasPackage(['apk-tools', 'wolfi-base'], $yamlConfig['contents']['packages']) ? "yes" : "no";
     }
 
     public function hasShell(array $yamlConfig): string
     {
-        return (
-            in_array('busybox', $yamlConfig['contents']['packages']) ||
-            in_array('bash', $yamlConfig['contents']['packages']) ||
-            in_array('wolfi-base', $yamlConfig['contents']['packages'])) ?
-            "yes" : "no";
+        return $this->hasPackage(['busybox', 'bash', 'wolfi-base'], $yamlConfig['contents']['packages']) ? "yes" : "no";
     }
 
     public function getDefaultUser(array $yamlConfig): string
     {
         if (!isset($yamlConfig['accounts']['users']) ||
             !isset($yamlConfig['accounts']['run-as']) ||
-            $yamlConfig['accounts']['run-as'] == 0
+            $yamlConfig['accounts']['run-as'] == 0 ||
+            $yamlConfig['accounts']['run-as'] == ""
         ) {
             return '`root`';
         }
 
         $uid = $yamlConfig['accounts']['run-as'];
-        if (is_string($uid)) {
+        /*if (is_string($uid)) {
             return "`$uid`";
-        }
+        }*/
 
         $runAs = "";
 
@@ -123,10 +102,28 @@ class ImageSpecs implements ReferencePage
             }
         }
 
+        if (!$runAs) {
+            $runAs = $uid;
+        }
+
         return "`$runAs`";
     }
 
-    public function getVariantsSection(array $variants, array $columns, array $headers): string
+    public function hasPackage(string|array $packageName, array $packages): bool
+    {
+        $result = array_filter($packages, function($value) use ($packageName) {
+            $split = explode('=', $value);
+            if (is_array($packageName)) {
+                return in_array($split[0], $packageName);
+            }
+
+            return $split[0] == $packageName;
+        });
+
+        return (bool)count($result);
+    }
+
+    public function getVariantsSection(string $image, array $variants, array $columns, array $headers): string
     {
         $content = "## Variants Compared\n";
 
@@ -134,9 +131,9 @@ class ImageSpecs implements ReferencePage
         $number = (sizeof($variants) === 1) ? "one public variant" : sizeof($variants) . " public variants";
 
         $content .= sprintf("The **%s** Chainguard Image currently has %s: %s",
-            $this->imageName,
+            $image,
             $number,
-            "\n\n- `" . implode("`\n- `", $variants) . "`\n\n"
+            "\n\n- `" . implode("`\n- `", array_keys($variants)) . "`\n\n"
         );
 
         $content .= "The table has detailed information about each of these variants.\n\n";
@@ -151,15 +148,15 @@ class ImageSpecs implements ReferencePage
         }
 
         $content .= Mark::table($tableRows, $headers);
-        $content .= "\nCheck the [tags history page](/chainguard/chainguard-images/reference/" . $this->imageName . "/tags_history/) for the full list of available tags.";
+        $content .= "\nCheck the [tags history page](/chainguard/chainguard-images/reference/" . $image . "/tags_history/) for the full list of available tags.";
 
         return $content;
     }
 
     public function getDependenciesSection(array $packages, array $headers): string
     {
-        $content = "\n## Image Dependencies\n";
-        $content .= "The table shows package distribution across all variants.\n\n";
+        $content = "\n## Packages Included\n";
+        $content .= "The table shows package distribution across variants.\n\n";
 
         $tableRows = [];
         $row = [];
@@ -174,6 +171,11 @@ class ImageSpecs implements ReferencePage
         $content .= Mark::table($tableRows, $headers);
 
         return $content;
+    }
+
+    public function getName(): string
+    {
+        return 'variants';
     }
 
     public function getSaveName(string $image): string

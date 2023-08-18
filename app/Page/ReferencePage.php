@@ -11,5 +11,7 @@ interface ReferencePage
 
     public function getContent(string $image): string;
 
+    public function getName(): string;
+
     public function getSaveName(string $image): string;
 }

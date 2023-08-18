@@ -10,5 +10,5 @@ test('autodocs builder has ImageReferenceBuilder loaded with pages.', function (
     /** @var ImageReferenceBuilder $imagesBuilder */
     $imagesBuilder = $autodocs->getBuilder('images-reference');
     $this->assertInstanceOf(ImageReferenceBuilder::class, $imagesBuilder);
-    $this->assertCount(2, $imagesBuilder->referencePages);
+    $this->assertCount(3, $imagesBuilder->referencePages);
 });
