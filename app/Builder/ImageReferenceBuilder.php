@@ -57,7 +57,7 @@ class ImageReferenceBuilder extends DefaultBuilder
     /**
      * @throws FileNotFoundException
      */
-    public function buildDocsForImage(string $image, string $page = "all"): void
+    public function buildDocsForImage(string $image, string $pages = "all"): void
     {
         if (!is_dir($this->diffSourcePath . '/' . $image)) {
             $this->newImages[] = $image;
@@ -68,6 +68,7 @@ class ImageReferenceBuilder extends DefaultBuilder
             mkdir($savePath, 0777, true);
         }
 
+        $pagesArray = explode(',', $pages);
         $this->savePage($this->outputPath . '/' . $image . '/_index.md', $this->getIndexPage(
             $image,
             "Chainguard Images Reference: $image",
@@ -76,7 +77,7 @@ class ImageReferenceBuilder extends DefaultBuilder
 
         foreach ($this->referencePages as $referencePage)
         {
-            if ($page === "all" || $page === $referencePage->getName()) {
+            if ($pages === "all" || in_array($referencePage->getName(), $pagesArray)) {
                 $this->savePage(
                     $savePath . '/' . $referencePage->getSaveName($image),
                     $referencePage->getContent($image)

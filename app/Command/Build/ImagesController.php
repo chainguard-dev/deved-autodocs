@@ -41,11 +41,25 @@ class ImagesController extends CommandController
             }
             $imageName = $image['repo']['name'];
             $this->info("Building docs for the $imageName image...");
-            $imagesBuilder->buildDocsForImage($imageName, $this->getParam("page"));
+
+            $pages = "all";
+            if ($this->hasParam('pages')) {
+                $pages = $this->getParam('pages');
+            }
+
+            if (getenv('YAMLDOCS_BUILD_PAGES')) {
+                $pages = getenv('YAMLDOCS_BUILD_PAGES');
+            }
+
+            $imagesBuilder->buildDocsForImage($imageName, $pages);
         }
 
-        $imagesBuilder->saveChangelog();
-        $this->info("Latest changes saved to $imagesBuilder->lastUpdatePath.");
-        $this->info("Changelog saved to $imagesBuilder->changelogPath.");
+        if (!$this->hasFlag('skip-changelog')) {
+            $imagesBuilder->saveChangelog();
+            $this->info("Latest changes saved to $imagesBuilder->lastUpdatePath.");
+            $this->info("Changelog saved to $imagesBuilder->changelogPath.");
+        }
+
+        $this->info("Finished update. Output saved to $imagesBuilder->outputPath.");
     }
 }
